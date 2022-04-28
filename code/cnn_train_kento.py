@@ -138,7 +138,7 @@ class Model(tf.keras.Model):
         return tf.reduce_mean(tf.cast(correct_predictions, tf.float32))
 
 
-def train(model, train_inputs, train_labels):
+def train(model, train_dataset):
     """Train function for categorization of skin cancers given images
 
     :param model: CNN model to train
@@ -146,42 +146,26 @@ def train(model, train_inputs, train_labels):
     :param train_labels: one-hot labels of training images
     :return: none
     """
-    inds = tf.range(0, train_inputs.shape[0], dtype=tf.int32) # indices representing images
-    shuffled_inds = tf.random.shuffle(inds) # shuffled indices
-    shuffled_inputs = tf.gather(train_inputs, shuffled_inds) # correlate indices to images/labels
-    shuffled_labels = tf.gather(train_labels, shuffled_inds)
-
-    # number of inputs for batching
-    tot_size = train_inputs.shape[0]
     
-    i = 0 # starting image index; initialize from 0
-    ## start batching process ##
-    while i < tot_size + model.batch_size - 1:
-        if i + model.batch_size < tot_size:
-            inputs_slice = shuffled_inputs[i:i+model.batch_size]
-            labels_slice = shuffled_labels[i:i+model.batch_size]
-        else: # just in case the tot_size - i is less than batch_size
-            inputs_slice = shuffled_inputs[i:]
-            labels_slice = shuffled_labels[i:]
-        # end batching process ##
+    b = 1 # number batches
+    # number of inputs for batching
+    for train_inputs, train_labels in train_dataset:
+        train_inputs /= 255.0 # normalize pixel values
 
         with tf.GradientTape() as tape:
-            probs = model.call(inputs_slice, dense=True, style=False, is_testing=False)
-            loss = model.loss(probs, labels_slice)
-
-            # print accuracy every 100 images
-            if i % 100 == 0:
-                train_acc = model.accuracy(probs, labels_slice)
-                print(f'Accuracy on training set after {i} images: {train_acc}')
+            probs = model.call(train_inputs, dense=True, style=False, is_testing=False)
+            loss = model.loss(probs, train_labels)
 
             grads = tape.gradient(loss, model.trainable_weights)
             model.optimizer.apply_gradients(zip(grads, model.trainable_weights))
 
-        i += model.batch_size
+            print(f'batch, {b} loss: {loss}')
+            b += 1
+
     return None
 
 
-def test(model, test_inputs, test_labels):
+def test(model, test_dataset):
     """Train function for categorization of skin cancers given images
 
     :param model: CNN model to test
@@ -189,23 +173,26 @@ def test(model, test_inputs, test_labels):
     :param train_labels: one-hot labels of testing images
     :return: Accuracy"""
 
+    for test_inputs, test_labels in test_dataset:
+        test_inputs /= 255.0 # normalize pixel values
     probs = model.call(test_inputs, dense=True, style=False, is_testing=True)
     return model.accuracy(probs, test_labels)
 
 
 def main():
     """
-    :return: none"""
-    train_inputs, train_labels = get_data('../data/train')
-    test_inputs, test_labels = get_data('../data/test')
+    :return: run training and testing"""
 
     model = Model()
+    train_dataset, test_dataset = get_data('../ISIC_data/Train/', '../ISIC_data/Test/', 
+                                            batch_sz=model.batch_size, shuffle=True)
+
     # cycle through epochs
     for e in range(model.epochs):
         print(f'Start Epoch #{e+1}')
-        train(model, train_inputs, train_labels)
+        train(model, train_dataset)
 
-    test_acc = test(model, test_inputs, test_labels)
+    test_acc = test(model, test_dataset)
     
     print(f'Test accuracy is = {test_acc*100} %')
     return
