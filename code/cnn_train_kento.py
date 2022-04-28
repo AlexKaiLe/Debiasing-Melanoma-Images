@@ -62,7 +62,7 @@ class Model(tf.keras.Model):
         self.latents[name] = x
         pass
 
-    def pool(style, name):
+    def pool(self, style, name):
         """Pooling layer depending on style or content.
         
         :param style: True or False
