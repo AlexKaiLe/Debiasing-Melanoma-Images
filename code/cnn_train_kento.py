@@ -16,7 +16,7 @@ class Model(tf.keras.Model):
         self.batch_size = 64
         self.num_classes = 9
 
-        self.lr = 1E-3 # learning rate for optimizer
+        self.lr = 0.01 # learning rate for optimizer
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.lr)
         self.dropoutrate = 0.3
         self.epsilon = 1E-5
@@ -158,8 +158,8 @@ def train(model, train_dataset):
 
             grads = tape.gradient(loss, model.trainable_weights)
             model.optimizer.apply_gradients(zip(grads, model.trainable_weights))
-
-            print(f'batch, {b} loss: {loss}')
+            acc = model.accuracy(probs, train_labels)
+            print(f'batch, {b} accuracy: {acc*100}%')
             b += 1
 
     return None
