@@ -154,7 +154,7 @@ def main():
         print('Test Accuracy after epoch', e, ':', acc)
         model.save_weights('../checkpoints/weights.h5')
         print('Weights Saved!')
-        model.save_model('../checkpoints/model.h5')
+        model.save('../checkpoints/model.h5')
         print('Model Saved!')
 
 def preprocess(data):
