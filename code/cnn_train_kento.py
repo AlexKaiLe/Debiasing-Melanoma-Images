@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+from tarfile import is_tarfile
 import tensorflow as tf
 from tensorflow.keras.layers import Conv2D, MaxPool2D, Dropout, Flatten, Dense, AvgPool2D
 import numpy as np
@@ -16,27 +17,28 @@ class Model(tf.keras.Model):
         self.batch_size = 64
         self.num_classes = 9
 
-        self.lr = 0.01 # learning rate for optimizer
+        self.lr = 0.0005 # learning rate for optimizer
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.lr)
         self.dropoutrate = 0.3
         self.epsilon = 1E-5
-        self.epochs = 1
+        self.epochs = 3
 
         # Call layers
+        self.dropout = tf.keras.layers.Dropout(self.dropoutrate)
         # Block 1
-        self.block1_conv1 = Conv2D(32, 3, 1, padding="same", activation="relu", name="block1_conv1")
-        self.block1_conv2 = Conv2D(32, 3, 1, padding="same", activation="relu", name="block1_conv2")
+        self.block1_conv1 = Conv2D(8, 3, 1, padding="same", activation="relu", name="block1_conv1")
+        self.block1_conv2 = Conv2D(8, 3, 1, padding="same", activation="relu", name="block1_conv2")
         # Block 2
-        self.block2_conv1 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block2_conv1")
-        self.block2_conv2 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block2_conv2")
+        self.block2_conv1 = Conv2D(32, 3, 1, padding="same", activation="relu", name="block2_conv1")
+        self.block2_conv2 = Conv2D(32, 3, 1, padding="same", activation="relu", name="block2_conv2")
         # Block 3
-        self.block3_conv1 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block3_conv1")
-        self.block3_conv2 = Conv2D(124, 3, 1, padding="same", activation="relu", name="block3_conv2")
-        self.block3_conv3 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block3_conv3")
+        self.block3_conv1 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block3_conv1")
+        self.block3_conv2 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block3_conv2")
+        self.block3_conv3 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block3_conv3")
         # Block 4
-        self.block4_conv1 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block4_conv1")
-        self.block4_conv2 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block4_conv2")
-        self.block4_conv3 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block4_conv3")
+        self.block4_conv1 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block4_conv1")
+        self.block4_conv2 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block4_conv2")
+        self.block4_conv3 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block4_conv3")
         # Block 5
         self.block5_conv1 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block5_conv1")
         self.block5_conv2 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block5_conv2")
@@ -45,7 +47,8 @@ class Model(tf.keras.Model):
         # Dense Layers for Classification
         self.flatten = Flatten()
         self.dense1 = Dense(256, activation='relu', name='dense1')
-        self.dense2 = Dense(9, activation='softmax', name='dense2')
+        self.dense2 = Dense(64, activation='relu', name='dense2')
+        self.dense3 = Dense(9, activation='softmax', name='dense3')
 
         # loss function
         self.class_loss = tf.keras.losses.CategoricalCrossentropy()
@@ -72,39 +75,66 @@ class Model(tf.keras.Model):
             return AvgPool2D(2, name=name)
         else:
             return MaxPool2D(2, name=name)
+    
+    def batch_norm(self, x):
+        mean, variance = tf.nn.moments(x, axes=[0,1,2])
+        x = tf.nn.batch_normalization(x, mean, variance,  None, None, variance_epsilon=self.epsilon)
+        return x
 
-    def call(self, inputs, dense=False, style=False, is_testing=False):
+    def call(self, inputs, dense=False, style=False, is_training=False):
         
         # CNN block 1
         x = self.block1_conv1(inputs)
+        x = self.batch_norm(x)
+        x = self.dropout(x, training=is_training)
         x = self.block1_conv2(x)
+        x = self.batch_norm(x)
+        x = self.dropout(x, training=is_training)
         x = self.pool(style, 'block1_pool')(x)
         if style: self.save_latent(x, style, 'block1')
         
         # CNN block 2
         x = self.block2_conv1(x)
+        x = self.batch_norm(x)
+        x = self.dropout(x, training=is_training)
         x = self.block2_conv2(x)
+        x = self.batch_norm(x)
         x = self.pool(style, 'block2_pool')(x)
         if style: self.save_latent(x, style, 'block2')
 
         # CNN block 3
         x = self.block3_conv1(x)
+        x = self.batch_norm(x)
+        x = self.dropout(x, training=is_training)
         x = self.block3_conv2(x)
+        x = self.batch_norm(x)
+        x = self.dropout(x, training=is_training)
         x = self.block3_conv3(x)
+        x = self.batch_norm(x)
         x = self.pool(style, 'block3_pool')(x)
         if style: self.save_latent(x, style, 'block3')
 
         # CNN block 4
         x = self.block4_conv1(x)
+        x = self.batch_norm(x)
+        x = self.dropout(x, training=is_training)
         x = self.block4_conv2(x)
+        x = self.batch_norm(x)
+        x = self.dropout(x, training=is_training)
         x = self.block4_conv3(x)
+        x = self.batch_norm(x)
         x = self.pool(style, 'block4_pool')(x)
         if style: self.save_latent(x, style, 'block4')
 
         # CNN block 5
         x = self.block5_conv1(x)
+        x = self.batch_norm(x)
+        x = self.dropout(x, training=is_training)
         x = self.block5_conv2(x)
+        x = self.batch_norm(x)
+        x = self.dropout(x, training=is_training)
         x = self.block5_conv3(x)
+        x = self.batch_norm(x)
         x = self.pool(style, 'block5_pool')(x)
         if style: self.save_latent(x, style, 'block5')
 
@@ -112,7 +142,10 @@ class Model(tf.keras.Model):
         if dense:
             x = self.flatten(x)
             x = self.dense1(x)
-            probs = self.dense2(x)
+            x = self.dropout(x, training=is_training)
+            x = self.dense2(x)
+            x = self.dropout(x, training=is_training)
+            probs = self.dense3(x)
             return probs
         else:
             pass #?
@@ -148,12 +181,14 @@ def train(model, train_dataset):
     """
     
     b = 1 # number batches
+    buffer_sz = 3000
     # number of inputs for batching
+    train_dataset = train_dataset.shuffle(buffer_sz)
     for train_inputs, train_labels in train_dataset:
         train_inputs /= 255.0 # normalize pixel values
 
         with tf.GradientTape() as tape:
-            probs = model.call(train_inputs, dense=True, style=False, is_testing=False)
+            probs = model.call(train_inputs, dense=True, style=False, is_training=True)
             loss = model.loss(probs, train_labels)
 
             grads = tape.gradient(loss, model.trainable_weights)
@@ -175,7 +210,7 @@ def test(model, test_dataset):
 
     for test_inputs, test_labels in test_dataset:
         test_inputs /= 255.0 # normalize pixel values
-    probs = model.call(test_inputs, dense=True, style=False, is_testing=True)
+    probs = model.call(test_inputs, dense=True, style=False, is_training=False)
     return model.accuracy(probs, test_labels)
 
 
@@ -191,6 +226,8 @@ def main():
     for e in range(model.epochs):
         print(f'Start Epoch #{e+1}')
         train(model, train_dataset)
+        acc = test(model, test_dataset)
+        print(f'Test Accuracy after epoch {e+1}: {acc*100}%')
 
     test_acc = test(model, test_dataset)
     
