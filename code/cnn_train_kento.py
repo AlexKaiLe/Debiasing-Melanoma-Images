@@ -21,7 +21,7 @@ class Model(tf.keras.Model):
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.lr)
         self.dropoutrate = 0.3
         self.epsilon = 1E-5
-        self.epochs = 3
+        self.epochs = 6
 
         # Call layers
         self.dropout = tf.keras.layers.Dropout(self.dropoutrate)
@@ -232,7 +232,11 @@ def main():
     test_acc = test(model, test_dataset)
     
     print(f'Test accuracy is = {test_acc*100} %')
-    model.save_weights('../checkpoints')
+    for m in model.layers:
+        model.save_weights(f'../checkpoints/{m.name}.h5')
+
+    model.save_weights('../checkpoints/weights.h5')
+    print('Weights Saved!')
 
 if __name__ == '__main__':
     main()
