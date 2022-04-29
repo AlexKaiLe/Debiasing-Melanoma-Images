@@ -221,7 +221,7 @@ def main():
     model = Model()
     train_dataset, test_dataset = get_data('../ISIC_data/Train/', '../ISIC_data/Test/', 
                                             batch_sz=model.batch_size, shuffle=True, 
-                                            image_sz=(256,256)) # try changing to (600,450) on GPU
+                                            image_sz=(600,450)) # try changing to (600,450) on GPU
 
     # cycle through epochs
     for e in range(model.epochs):
