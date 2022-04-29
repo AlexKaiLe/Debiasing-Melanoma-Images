@@ -21,7 +21,7 @@ class Model(tf.keras.Model):
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.lr)
         self.dropoutrate = 0.3
         self.epsilon = 1E-5
-        self.epochs = 6
+        self.epochs = 15
 
         # Call layers
         self.dropout = tf.keras.layers.Dropout(self.dropoutrate)
@@ -220,7 +220,8 @@ def main():
 
     model = Model()
     train_dataset, test_dataset = get_data('../ISIC_data/Train/', '../ISIC_data/Test/', 
-                                            batch_sz=model.batch_size, shuffle=True)
+                                            batch_sz=model.batch_size, shuffle=True, 
+                                            image_sz=(256,256)) # try changing to (600,450) on GPU
 
     # cycle through epochs
     for e in range(model.epochs):
@@ -233,8 +234,10 @@ def main():
     
     print(f'Test accuracy is = {test_acc*100} %')
 
-    for m in model.layers:
-        model.save_weights(f'../checkpoints/{m.name}.h5')
+    # I don't think we need this
+    # for m in model.layers:
+    #     weights = np.array(m.get_weights())
+    #     np.save(f'../checkpoints/{m.name}.npz', weights)
 
     model.save_weights('../checkpoints/weights.h5')
     print('Weights Saved!')
