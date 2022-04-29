@@ -19,7 +19,7 @@ class Model(tf.keras.Model):
 
         self.lr = 0.0005 # learning rate for optimizer
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.lr)
-        self.dropoutrate = 0.3
+        self.dropoutrate = 0.5
         self.epsilon = 1E-5
         self.epochs = 50
 
