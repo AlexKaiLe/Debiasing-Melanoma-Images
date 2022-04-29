@@ -21,7 +21,7 @@ class Model(tf.keras.Model):
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.lr)
         self.dropoutrate = 0.3
         self.epsilon = 1E-5
-        self.epochs = 15
+        self.epochs = 50
 
         # Call layers
         self.dropout = tf.keras.layers.Dropout(self.dropoutrate)
