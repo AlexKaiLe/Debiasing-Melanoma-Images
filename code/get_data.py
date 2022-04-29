@@ -16,12 +16,14 @@ def get_data(train_file, test_file, batch_sz, shuffle, image_sz):
         image_sz = (256, 256)
     train_dataset = tf.keras.preprocessing.image_dataset_from_directory(train_file, 
                                                                 labels='inferred', 
+                                                                color_mode='rgb',
                                                                 label_mode='categorical', 
                                                                 batch_size=batch_sz, 
                                                                 shuffle=shuffle,
                                                                 image_size=image_sz)
     test_dataset = tf.keras.preprocessing.image_dataset_from_directory(test_file, 
                                                                 labels='inferred', 
+                                                                color_mode='rgb',
                                                                 label_mode='categorical', 
                                                                 batch_size=batch_sz, 
                                                                 shuffle=shuffle,
