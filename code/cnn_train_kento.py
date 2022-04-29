@@ -232,8 +232,7 @@ def main():
     test_acc = test(model, test_dataset)
     
     print(f'Test accuracy is = {test_acc*100} %')
-    return
-
+    model.save_weights('./checkpoints')
 
 if __name__ == '__main__':
     main()
