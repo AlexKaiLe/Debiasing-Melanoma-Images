@@ -54,9 +54,8 @@ def main():
     ###############################
 
     ##### GENERATE STATIC IMAGE #####
-    generated_image = tf.Variable(tf.random.truncated_normal((1,256,256,3), mean=0., stddev=1))
+    generated_image = tf.Variable(tf.random.uniform((1,256,256,3), minval=0, maxval=1), name='Generated_Image')
     #################################
-
     
     
 if __name__ == '__main__':
