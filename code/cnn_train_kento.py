@@ -55,6 +55,7 @@ class Model(tf.keras.Model):
 
         # initialize latents
         self.latents = {}
+        self.feature_latent = {}
 
     def save_latent(self, x, name):
         """Save specified latent space to dictionary.
@@ -81,7 +82,7 @@ class Model(tf.keras.Model):
         x = tf.nn.batch_normalization(x, mean, variance,  None, None, variance_epsilon=self.epsilon)
         return x
 
-    def call(self, inputs, dense=False, style=False, is_training=False):
+    def call(self, inputs, dense=False, style=False, is_training=False, feature=False):
         
         # CNN block 1
         x = self.block1_conv1(inputs)
@@ -91,7 +92,7 @@ class Model(tf.keras.Model):
         x = self.batch_norm(x)
         x = self.dropout(x, training=is_training)
         x = self.pool(style, 'block1_pool')(x)
-        if style: self.save_latent(x, style, 'block1')
+        if style: self.save_latent(x, 'block1')
         
         # CNN block 2
         x = self.block2_conv1(x)
@@ -100,7 +101,7 @@ class Model(tf.keras.Model):
         x = self.block2_conv2(x)
         x = self.batch_norm(x)
         x = self.pool(style, 'block2_pool')(x)
-        if style: self.save_latent(x, style, 'block2')
+        if style: self.save_latent(x, 'block2')
 
         # CNN block 3
         x = self.block3_conv1(x)
@@ -112,7 +113,7 @@ class Model(tf.keras.Model):
         x = self.block3_conv3(x)
         x = self.batch_norm(x)
         x = self.pool(style, 'block3_pool')(x)
-        if style: self.save_latent(x, style, 'block3')
+        if style: self.save_latent(x, 'block3')
 
         # CNN block 4
         x = self.block4_conv1(x)
@@ -124,7 +125,8 @@ class Model(tf.keras.Model):
         x = self.block4_conv3(x)
         x = self.batch_norm(x)
         x = self.pool(style, 'block4_pool')(x)
-        if style: self.save_latent(x, style, 'block4')
+        if style: self.save_latent(x, 'block4')
+        if feature: self.feature_latent['block4'] = x
 
         # CNN block 5
         x = self.block5_conv1(x)
@@ -136,7 +138,7 @@ class Model(tf.keras.Model):
         x = self.block5_conv3(x)
         x = self.batch_norm(x)
         x = self.pool(style, 'block5_pool')(x)
-        if style: self.save_latent(x, style, 'block5')
+        if style: self.save_latent(x, 'block5')
 
         # Dense Layers for Classification
         if dense:
@@ -147,8 +149,13 @@ class Model(tf.keras.Model):
             x = self.dropout(x, training=is_training)
             probs = self.dense3(x)
             return probs
-        else:
-            pass #?
+        
+        if style:
+            latents = self.latents
+            return latents
+
+        elif feature:
+            return self.feature_latent
 
     def loss(self, probs, labels):
         """Loss function using Categorical Crossentropy. Averages over batch.
@@ -188,7 +195,7 @@ def train(model, train_dataset):
         train_inputs /= 255.0 # normalize pixel values
 
         with tf.GradientTape() as tape:
-            probs = model.call(train_inputs, dense=True, style=False, is_training=True)
+            probs = model.call(train_inputs, dense=True, style=False, is_training=True, feature=False)
             loss = model.loss(probs, train_labels)
 
             grads = tape.gradient(loss, model.trainable_weights)
@@ -210,8 +217,8 @@ def test(model, test_dataset):
 
     for test_inputs, test_labels in test_dataset:
         test_inputs /= 255.0 # normalize pixel values
-    probs = model.call(test_inputs, dense=True, style=False, is_training=False)
-    return model.accuracy(probs, test_labels)
+    probs = model.call(test_inputs, dense=True, style=False, is_training=False, feature=False)
+    return model.accuracy(probs, test_labels).numpy()
 
 
 def main():
