@@ -154,8 +154,8 @@ def main():
         print('Test Accuracy after epoch', e, ':', acc)
         model.save_weights('../checkpoints/weights.h5')
         print('Weights Saved!')
-        model.save('../checkpoints/model.h5')
-        print('Model Saved!')
+        # model.save('../checkpoints/model.h5')
+        # print('Model Saved!')
 
 def preprocess(data):
     image_data = []
