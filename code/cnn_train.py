@@ -131,7 +131,7 @@ def test(model, test_images, test_labels):
     accuracy = []
     for images, labels in zip(test_images, test_labels):
         probs = model.call(images, dense=True, style=False, is_training=False)
-        probs, = np.array(probs, dtype=np.float)
+        probs = np.array(probs, dtype=np.float)
         labels = np.array(labels, dtype=np.float)
         loss = model.loss_fn(probs, labels)
         acc = model.accuracy(probs, labels)
