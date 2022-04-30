@@ -40,9 +40,9 @@ class Model(tf.keras.Model):
         self.block4_conv2 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block4_conv2")
         self.block4_conv3 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block4_conv3")
         # Block 5
-        self.block5_conv1 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block5_conv1")
-        self.block5_conv2 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block5_conv2")
-        self.block5_conv3 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block5_conv3")
+        self.block5_conv1 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block5_conv1")
+        self.block5_conv2 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block5_conv2")
+        self.block5_conv3 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block5_conv3")
 
         # Dense Layers for Classification
         self.flatten = Flatten()
@@ -115,30 +115,30 @@ class Model(tf.keras.Model):
         x = self.pool(style, 'block3_pool')(x)
         if style: self.save_latent(x, 'block3')
 
-        # # CNN block 4
-        # x = self.block4_conv1(x)
-        # x = self.batch_norm(x)
-        # x = self.dropout(x, training=is_training)
-        # x = self.block4_conv2(x)
-        # x = self.batch_norm(x)
-        # x = self.dropout(x, training=is_training)
-        # x = self.block4_conv3(x)
-        # x = self.batch_norm(x)
-        # x = self.pool(style, 'block4_pool')(x)
-        # if style: self.save_latent(x, 'block4')
-        # if feature: self.feature_latent['block4'] = x
+        # CNN block 4
+        x = self.block4_conv1(x)
+        x = self.batch_norm(x)
+        x = self.dropout(x, training=is_training)
+        x = self.block4_conv2(x)
+        x = self.batch_norm(x)
+        x = self.dropout(x, training=is_training)
+        x = self.block4_conv3(x)
+        x = self.batch_norm(x)
+        x = self.pool(style, 'block4_pool')(x)
+        if style: self.save_latent(x, 'block4')
+        if feature: self.feature_latent['block4'] = x
 
-        # # CNN block 5
-        # x = self.block5_conv1(x)
-        # x = self.batch_norm(x)
-        # x = self.dropout(x, training=is_training)
-        # x = self.block5_conv2(x)
-        # x = self.batch_norm(x)
-        # x = self.dropout(x, training=is_training)
-        # x = self.block5_conv3(x)
-        # x = self.batch_norm(x)
-        # x = self.pool(style, 'block5_pool')(x)
-        # if style: self.save_latent(x, 'block5')
+        # CNN block 5
+        x = self.block5_conv1(x)
+        x = self.batch_norm(x)
+        x = self.dropout(x, training=is_training)
+        x = self.block5_conv2(x)
+        x = self.batch_norm(x)
+        x = self.dropout(x, training=is_training)
+        x = self.block5_conv3(x)
+        x = self.batch_norm(x)
+        x = self.pool(style, 'block5_pool')(x)
+        if style: self.save_latent(x, 'block5')
 
         # Dense Layers for Classification
         if dense:
