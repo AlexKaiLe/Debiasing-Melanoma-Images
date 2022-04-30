@@ -155,7 +155,8 @@ class Model(tf.keras.Model):
             return latents
 
         elif feature:
-            return self.feature_latent
+            feature_latent = self.feature_latent
+            return feature_latent
 
     def loss(self, probs, labels):
         """Loss function using Categorical Crossentropy. Averages over batch.
