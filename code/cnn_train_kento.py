@@ -26,23 +26,23 @@ class Model(tf.keras.Model):
         # Call layers
         self.dropout = tf.keras.layers.Dropout(self.dropoutrate)
         # Block 1
-        self.block1_conv1 = Conv2D(32, 3, 1, padding="same", activation="relu", name="block1_conv1")
-        self.block1_conv2 = Conv2D(32, 3, 1, padding="same", activation="relu", name="block1_conv2")
+        self.block1_conv1 = Conv2D(8, 3, 1, padding="same", activation="relu", name="block1_conv1")
+        self.block1_conv2 = Conv2D(8, 3, 1, padding="same", activation="relu", name="block1_conv2")
         # Block 2
-        self.block2_conv1 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block2_conv1")
-        self.block2_conv2 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block2_conv2")
+        self.block2_conv1 = Conv2D(32, 3, 1, padding="same", activation="relu", name="block2_conv1")
+        self.block2_conv2 = Conv2D(32, 3, 1, padding="same", activation="relu", name="block2_conv2")
         # Block 3
-        self.block3_conv1 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block3_conv1")
-        self.block3_conv2 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block3_conv2")
-        self.block3_conv3 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block3_conv3")
-        # # Block 4
-        # self.block4_conv1 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block4_conv1")
-        # self.block4_conv2 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block4_conv2")
-        # self.block4_conv3 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block4_conv3")
-        # # Block 5
-        # self.block5_conv1 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block5_conv1")
-        # self.block5_conv2 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block5_conv2")
-        # self.block5_conv3 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block5_conv3")
+        self.block3_conv1 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block3_conv1")
+        self.block3_conv2 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block3_conv2")
+        self.block3_conv3 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block3_conv3")
+        # Block 4
+        self.block4_conv1 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block4_conv1")
+        self.block4_conv2 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block4_conv2")
+        self.block4_conv3 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block4_conv3")
+        # Block 5
+        self.block5_conv1 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block5_conv1")
+        self.block5_conv2 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block5_conv2")
+        self.block5_conv3 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block5_conv3")
 
         # Dense Layers for Classification
         self.flatten = Flatten()
