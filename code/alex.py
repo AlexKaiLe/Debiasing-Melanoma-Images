@@ -225,6 +225,8 @@ def main():
         train(model, train_dataset)
         acc = test(model, test_dataset)
         print(f'Test Accuracy after epoch {e+1}: {acc*100}%')
+        model.save_weights('../checkpoints/weights.h5')
+        print('Weights Saved!')
 
     test_acc = test(model, test_dataset)
     
@@ -235,8 +237,7 @@ def main():
     #     weights = np.array(m.get_weights())
     #     np.save(f'../checkpoints/{m.name}.npz', weights)
 
-    model.save_weights('../checkpoints/weights.h5')
-    print('Weights Saved!')
+    
 
 
 if __name__ == '__main__':
