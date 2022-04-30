@@ -12,16 +12,20 @@ from get_data import get_data
 
 
 class StyleTransfer:
-    def __init__(self, model, input_image, style_image, feature_image):
+    def __init__(self, model, train_model, input_image, style_image, feature_image):
         self.model = model # CNN model
+        self.train_model = train_model
         self.image = input_image # input image that is static --> to be changed
         self.style_image = style_image # image with style/texture
         self.feature_image = feature_image # image with features
 
-        self.lossratio = 0.001 # Feature/Style
-        self.num_iter = 20 # number of iterations
+        # self.loss_ratio = 0.001 # Feature/Style
+        self.num_iter = 5000 # number of iterations
+        self.total_loss = 0
 
         # self.style_layer
+        self.alpha = 1E-1
+        self.beta = 1E6
 
         self.block_id = ['block1', 'block2', 'block3', 'block4', 'block5']
 
@@ -33,14 +37,15 @@ class StyleTransfer:
 
     def train_step(self, input_image):
         with tf.GradientTape() as tape:
-            x_style = self.model.call(input_image, dense=False, style=True, is_training=False, feature=True)
-            x_feature = self.model.call(input_image, dense=False, style=False, is_training=False, feature=True)
+            clear_latents(self.model)
+            x_style = self.train_model.call(input_image, dense=False, style=True, is_training=False, feature=True)
+            x_feature = self.train_model.call(input_image, dense=False, style=False, is_training=False, feature=True)
 
             L_total = self.loss(x_style, x_feature)
         
-            grads = tape.gradient(L_total, input_image)
-            self.optimizer.apply_gradients(zip(grads, input_image))
-            self.image.assign(tf.clip_by_value(input_image, clip_value_min=0.0, clip_value_max=1.0))
+        grads = tape.gradient(L_total, input_image)
+        self.optimizer.apply_gradients([(grads, input_image)])
+        self.image.assign(tf.clip_by_value(input_image, clip_value_min=0.0, clip_value_max=1.0))
 
     
     def loss(self, x_style, x_feature):
@@ -48,30 +53,31 @@ class StyleTransfer:
         L_feature = 0
 
         for id in self.block_id:
+            # STYLE LOSS
             if id in self.style_latents_dict:
 
-                A = self.style_latents_dict[id]
-                F = x_style[id]
+                A = self.style_latents_dict[id] # Latents for style image
+                A = self.gram_matrix(A)
+                F = x_style[id] # Style latents for updating image
 
                 _, h, w, M = np.shape(F)
                 N = h*w
-
                 G = self.gram_matrix(tf.convert_to_tensor(F))
 
-                ### they multiply this value by weight for the layer, idk why look into it ###
-                L_style += (1./(4*N**2*M**2))*tf.reduce_sum(tf.pow(G-A, 2))
+                ### they multiply this value by weight for each layer ###
+                ### don't need because of the way we are storing the dictionaries ###
+                L_style += 1/5*(1./(4*N**2*M**2))*tf.reduce_sum(tf.pow(G-A, 2))
 
+            # FEATURE LOSS
             if id in self.feature_latents_dict:
                 
-                P = self.feature_latents_dict[id]
-                F = x_feature[id]
+                P = self.feature_latents_dict[id] # Latent for feature image
+                F = x_feature[id] # Feature latent for updating image
 
                 L_feature = 0.5*tf.reduce_sum(tf.pow(F-P, 2))
 
-        alpha = self.loss_ratio
-        beta = 1
-
-        L_total = alpha*L_feature + beta*L_style
+        L_total = self.alpha*L_feature + self.beta*L_style
+        self.total_loss = L_total
         return L_total
 
 
@@ -90,12 +96,15 @@ def clear_latents(model):
 def main():
     model_init = Model() # old model with dense layers
     model = Model() # just the CNN (no dense layers)
+    train_model = Model()
     
     model_init(tf.zeros((1,256,256,3)), dense=True) 
     model(tf.zeros((1,256,256,3)), dense=False) 
+    train_model(tf.zeros((1,256,256,3)), dense=False) 
     model_init.load_weights('../checkpoints/weights.h5') # load weights into old model
     for i, m in enumerate(model_init.layers[:-4]): # exclude layres from flatten --> dense3
         model.layers[i].set_weights(model_init.layers[i].get_weights())
+        train_model.layers[i].set_weights(model_init.layers[i].get_weights())
     del model_init
     model.summary()
     train_dataset, test_dataset = get_data('../ISIC_data/Train/', '../ISIC_data/Test/', 
@@ -116,11 +125,15 @@ def main():
     ##### GENERATE STATIC IMAGE #####
     generated_image = tf.Variable(tf.random.uniform((1,256,256,3), minval=0, maxval=1), name='Generated_Image', trainable=True)
 
-    styletransfer = StyleTransfer(model, generated_image, style_image, feature_image)
+    styletransfer = StyleTransfer(model, train_model, generated_image, style_image, feature_image)
     for i in range(styletransfer.num_iter):
         styletransfer.train_step(styletransfer.image)
+        if i % 100 == 0: print(f'Loss at iteration {i}: {styletransfer.total_loss}')
     
-    styletransfer.image*225.0
+    image = styletransfer.image*225.0
+    image = np.array(image, dtype=np.int8).reshape((256, 256, 3))
+    image = tf.keras.preprocessing.image.array_to_img(image, scale=False)
+    image.show()
     
     
 if __name__ == '__main__':
