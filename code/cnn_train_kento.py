@@ -92,7 +92,7 @@ class Model(tf.keras.Model):
         x = self.batch_norm(x)
         x = self.dropout(x, training=is_training)
         x = self.pool(style, 'block1_pool')(x)
-        if style: self.save_latent(x, 'block1')
+        if style: self.save_latent(x.numpy(), 'block1')
         
         # CNN block 2
         x = self.block2_conv1(x)
@@ -101,7 +101,7 @@ class Model(tf.keras.Model):
         x = self.block2_conv2(x)
         x = self.batch_norm(x)
         x = self.pool(style, 'block2_pool')(x)
-        if style: self.save_latent(x, 'block2')
+        if style: self.save_latent(x.numpy(), 'block2')
 
         # CNN block 3
         x = self.block3_conv1(x)
@@ -113,7 +113,7 @@ class Model(tf.keras.Model):
         x = self.block3_conv3(x)
         x = self.batch_norm(x)
         x = self.pool(style, 'block3_pool')(x)
-        if style: self.save_latent(x, 'block3')
+        if style: self.save_latent(x.numpy(), 'block3')
 
         # CNN block 4
         x = self.block4_conv1(x)
@@ -125,8 +125,8 @@ class Model(tf.keras.Model):
         x = self.block4_conv3(x)
         x = self.batch_norm(x)
         x = self.pool(style, 'block4_pool')(x)
-        if style: self.save_latent(x, 'block4')
-        if feature: self.feature_latent['block4'] = x
+        if style: self.save_latent(x.numpy(), 'block4')
+        if feature: self.feature_latent['block4'] = x.numpy()
 
         # CNN block 5
         x = self.block5_conv1(x)
@@ -138,7 +138,7 @@ class Model(tf.keras.Model):
         x = self.block5_conv3(x)
         x = self.batch_norm(x)
         x = self.pool(style, 'block5_pool')(x)
-        if style: self.save_latent(x, 'block5')
+        if style: self.save_latent(x.numpy(), 'block5')
 
         # Dense Layers for Classification
         if dense:

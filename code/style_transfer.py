@@ -7,7 +7,18 @@ import matplotlib.pyplot as plt
 import os
 from cnn_train_kento import Model, test
 from get_data import get_data
-# from preprocess import preprocess
+
+
+class StyleTransfer:
+    def __init__(self, model, input_image, style_image, feature_image):
+        self.model = model # CNN model
+        self.image = input_image # input image that is static --> to be changed
+        self.style_image = style_image # image with style/texture
+        self.feature_image = feature_image # image with features
+
+        self.lossratio = 0.001 # Feature/Style
+        self.N = 100 # number of iterations
+
 
 def clear_latents(model):
     model.feature_latent = {}
@@ -54,7 +65,7 @@ def main():
     ###############################
 
     ##### GENERATE STATIC IMAGE #####
-    generated_image = tf.Variable(tf.random.uniform((1,256,256,3), minval=0, maxval=1), name='Generated_Image')
+    generated_image = tf.Variable(tf.random.uniform((1,256,256,3), minval=0, maxval=1), name='Generated_Image', trainable=True)
     #################################
     
     
