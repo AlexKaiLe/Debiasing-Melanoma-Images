@@ -26,23 +26,23 @@ class Model(tf.keras.Model):
         # Call layers
         self.dropout = tf.keras.layers.Dropout(self.dropoutrate)
         # Block 1
-        self.block1_conv1 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block1_conv1")
-        self.block1_conv2 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block1_conv2")
+        self.block1_conv1 = Conv2D(32, 3, 1, padding="same", activation="relu", name="block1_conv1")
+        self.block1_conv2 = Conv2D(32, 3, 1, padding="same", activation="relu", name="block1_conv2")
         # Block 2
-        self.block2_conv1 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block2_conv1")
-        self.block2_conv2 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block2_conv2")
+        self.block2_conv1 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block2_conv1")
+        self.block2_conv2 = Conv2D(64, 3, 1, padding="same", activation="relu", name="block2_conv2")
         # Block 3
-        self.block3_conv1 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block3_conv1")
-        self.block3_conv2 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block3_conv2")
-        self.block3_conv3 = Conv2D(256, 3, 1, padding="same", activation="relu", name="block3_conv3")
-        # Block 4
-        self.block4_conv1 = Conv2D(512, 3, 1, padding="same", activation="relu", name="block4_conv1")
-        self.block4_conv2 = Conv2D(512, 3, 1, padding="same", activation="relu", name="block4_conv2")
-        self.block4_conv3 = Conv2D(512, 3, 1, padding="same", activation="relu", name="block4_conv3")
-        # Block 5
-        self.block5_conv1 = Conv2D(512, 3, 1, padding="same", activation="relu", name="block5_conv1")
-        self.block5_conv2 = Conv2D(512, 3, 1, padding="same", activation="relu", name="block5_conv2")
-        self.block5_conv3 = Conv2D(512, 3, 1, padding="same", activation="relu", name="block5_conv3")
+        self.block3_conv1 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block3_conv1")
+        self.block3_conv2 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block3_conv2")
+        self.block3_conv3 = Conv2D(128, 3, 1, padding="same", activation="relu", name="block3_conv3")
+        # # Block 4
+        # self.block4_conv1 = Conv2D(512, 3, 1, padding="same", activation="relu", name="block4_conv1")
+        # self.block4_conv2 = Conv2D(512, 3, 1, padding="same", activation="relu", name="block4_conv2")
+        # self.block4_conv3 = Conv2D(512, 3, 1, padding="same", activation="relu", name="block4_conv3")
+        # # Block 5
+        # self.block5_conv1 = Conv2D(512, 3, 1, padding="same", activation="relu", name="block5_conv1")
+        # self.block5_conv2 = Conv2D(512, 3, 1, padding="same", activation="relu", name="block5_conv2")
+        # self.block5_conv3 = Conv2D(512, 3, 1, padding="same", activation="relu", name="block5_conv3")
 
         # Dense Layers for Classification
         self.flatten = Flatten()
@@ -85,20 +85,20 @@ class Model(tf.keras.Model):
         x = self.pool(style, 'block3_pool')(x)
         self.save_latent(x, style, 'block3')
 
-        # CNN block 4
-        x = self.block4_conv1(x)
-        x = self.block4_conv2(x)
-        x = self.block4_conv3(x)
-        x = self.pool(style, 'block4_pool')(x)
-        self.save_latent(x, style, 'block4')
+        # # CNN block 4
+        # x = self.block4_conv1(x)
+        # x = self.block4_conv2(x)
+        # x = self.block4_conv3(x)
+        # x = self.pool(style, 'block4_pool')(x)
+        # self.save_latent(x, style, 'block4')
 
-        # CNN block 5
-        x = self.block5_conv1(x)
-        x = self.block5_conv2(x)
-        x = self.block5_conv3(x)
-        x = self.pool(style, 'block5_pool')(x)
-        x = self.dropout(x, training=is_training)
-        self.save_latent(x, style, 'block5')
+        # # CNN block 5
+        # x = self.block5_conv1(x)
+        # x = self.block5_conv2(x)
+        # x = self.block5_conv3(x)
+        # x = self.pool(style, 'block5_pool')(x)
+        # x = self.dropout(x, training=is_training)
+        # self.save_latent(x, style, 'block5')
 
         # Dense Layers for Classification
         if dense:
@@ -133,15 +133,14 @@ def test(model, test_images, test_labels):
         probs = model.call(images, dense=True, style=False, is_training=False)
         probs = np.array(probs, dtype=np.float)
         labels = np.array(labels, dtype=np.float)
-        loss = model.loss_fn(probs, labels)
         acc = model.accuracy(probs, labels)
         accuracy.append(acc)
-        print(loss, acc)
+        print(acc)
     return np.average(accuracy)
 
 def main():
     model = Model()
-    train_dataset, test_dataset = get_data('../ISIC_data/Train/', '../ISIC_data/Test/', batch_sz=model.batch_size, shuffle=True, image_sz=(256,256))
+    train_dataset, test_dataset = get_data('../ISIC_data/Train/', '../ISIC_data/Test/', batch_sz=model.batch_size, shuffle=True, image_sz=(640,640))
     train_images, traing_labels = preprocess(train_dataset)
     print("Finished train preprocess")
     test_images, test_labels = preprocess(test_dataset)
@@ -154,8 +153,6 @@ def main():
         print('Test Accuracy after epoch', e, ':', acc)
         model.save_weights('../checkpoints/weights.h5')
         print('Weights Saved!')
-        # model.save('../checkpoints/model.h5')
-        # print('Model Saved!')
 
 def preprocess(data):
     image_data = []
