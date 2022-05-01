@@ -57,8 +57,8 @@ class Model(tf.keras.Model):
         self.latents = {}
         self.feature_latent = {}
 
-        self.resize_and_rescale = tf.keras.Sequential([tf.keras.layers.Resizing(256,256),tf.keras.layers.Rescaling(1./255)])
-        self.data_augmentation = tf.keras.Sequential([tf.keras.layers.RandomFlip("horizontal_and_vertical"),tf.keras.layers.RandomRotation(0.5),])
+        # self.resize_and_rescale = tf.keras.Sequential([tf.keras.layers.Resizing(256,256),tf.keras.layers.Rescaling(1./255)])
+        # self.data_augmentation = tf.keras.Sequential([tf.keras.layers.RandomFlip("horizontal_and_vertical"),tf.keras.layers.RandomRotation(0.5),])
     
     def save_latent(self, x, name):
         """Save specified latent space to dictionary.
@@ -194,7 +194,7 @@ def train(model, train_dataset):
     # number of inputs for batching
     train_dataset = train_dataset.shuffle(buffer_sz)
     for train_inputs, train_labels in train_dataset:
-        # train_inputs /= 255.0 # normalize pixel values
+        train_inputs /= 255.0 # normalize pixel values
         # train_inputs = tf.image.random_flip_left_right(train_inputs)
         with tf.GradientTape() as tape:
             probs = model.call(train_inputs, dense=True, style=False, is_training=True, feature=False)
