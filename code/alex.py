@@ -84,7 +84,7 @@ def get_model():
     model_cnn.add(Dense(64, activation='relu', name='dense2'))
     model_cnn.add(Dense(9, activation='softmax', name='dense3'))
     optimizer = tf.keras.optimizers.RMSprop(learning_rate=1e-4, momentum=0.01)
-    model_cnn.compile(loss=loss_fn, optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
+    model_cnn.compile(loss=loss_fn, optimizer=optimizer, metrics=['accuracy'])
     return model_cnn
 
 def loss_fn(labels, predictions):
