@@ -44,9 +44,12 @@ def shuffle(x_data, y_data):
 
 def get_model():
     model_cnn = Sequential()
+    model_cnn.add(Conv2D(32, (3, 3), input_shape=(224, 224, 3), activation='relu'))
+    model_cnn.add(Flatten())
+    model_cnn.add(Dense(9, activation='softmax'))
 
     # Block 1
-    model_cnn.add(Conv2D(32, 3, input_shape=(224, 224, 3), activation="relu", name="block1_conv1"))
+    # model_cnn.add(Conv2D(32, 3, input_shape=(224, 224, 3), activation="relu", name="block1_conv1"))
     # model_cnn.add(Dropout(0.3))
     # model_cnn.add(Conv2D(8, 3, 1, padding="same", activation="relu", name="block1_conv2"))
     # model_cnn.add(Dropout(0.3))
@@ -80,11 +83,11 @@ def get_model():
     # model_cnn.add(MaxPool2D(2))
 
     # Dense Layers for Classification
-    model_cnn.add(Dropout(0.3))
-    model_cnn.add(Flatten())
+    # model_cnn.add(Dropout(0.3))
+    # model_cnn.add(Flatten())
     # model_cnn.add(Dense(128, activation='relu', name='dense1'))
     # model_cnn.add(Dense(64, activation='relu', name='dense2'))
-    model_cnn.add(Dense(9, activation='softmax', name='dense3'))
+    # model_cnn.add(Dense(9, activation='softmax', name='dense3'))
 
     model_cnn.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model_cnn
