@@ -31,15 +31,15 @@ class StyleTransfer:
         self.block_id = ['block1', 'block2', 'block3', 'block4', 'block5']
 
         # Dictionaries for latent tensors of reference style and features
-        self.style_latents_dict = model.call(style_image, dense=False, style=True, is_training=False, feature=False)
-        self.feature_latents_dict = model.call(feature_image, dense=False, style=False, is_training=False, feature=True)
+        self.style_latents_dict = model.call(style_image, dense=False, style=True, is_training=False, feature=True)
+        self.feature_latents_dict = self.model.feature_latent
         
-        self.num_iter = 5000 # Number of iterations
+        self.num_iter = 1000 # Number of iterations
         self.total_loss = 0 # Total loss (resets for every iteration)
 
         # Weights for Loss
         self.alpha = 1 # Feature
-        self.beta = 1E10 # Style
+        self.beta = 1E7 # Style
         
         # Image optimization
         self.lr = 0.01 # learning rate
@@ -55,7 +55,7 @@ class StyleTransfer:
         with tf.GradientTape() as tape:
             clear_latents(self.train_model)
             x_style = self.train_model.call(input_image, dense=False, style=True, is_training=False, feature=True)
-            x_feature = self.train_model.call(input_image, dense=False, style=False, is_training=False, feature=True)
+            x_feature = self.train_model.feature_latent
 
             L_total = self.loss(x_style, x_feature)
         
@@ -182,7 +182,7 @@ def main():
 
     ##### GENERATE STATIC IMAGE #####
     # generated_image = tf.Variable(tf.random.uniform((1,256,256,3), minval=0, maxval=1), name='Generated_Image', trainable=True)
-    generated_image = tf.Variable(feature_image.numpy(), trainable=True)
+    generated_image = tf.Variable(style_image.numpy(), trainable=True)
 
     #### START STYLE TRANSFER ####
     styletransfer = StyleTransfer(model, train_model, generated_image, style_image, feature_image) # instantiate model
