@@ -46,23 +46,21 @@ def get_model():
     model_cnn = Sequential()
 
     # Block 1
-    model_cnn.add(Conv2D(32, 3, 1, input_shape=(224, 224, 3), padding="same", activation="relu", name="block1_conv1"))
+    model_cnn.add(Conv2D(8, 3, 1, input_shape=(224, 224, 3), padding="same", activation="relu", name="block1_conv1"))
     # model_cnn.add(Dropout(0.3))
-    model_cnn.add(Conv2D(32, 3, 1, padding="same", activation="relu", name="block1_conv2"))
+    # model_cnn.add(Conv2D(8, 3, 1, padding="same", activation="relu", name="block1_conv2"))
     # model_cnn.add(Dropout(0.3))
     model_cnn.add(MaxPool2D(2))
     # Block 2
-    model_cnn.add(Conv2D(64, 3, 1, padding="same", activation="relu", name="block2_conv1"))
+    model_cnn.add(Conv2D(32, 3, 1, padding="same", activation="relu", name="block2_conv1"))
     # model_cnn.add(Dropout(0.3))
-    model_cnn.add(Conv2D(64, 3, 1, padding="same", activation="relu", name="block2_conv2"))
+    # model_cnn.add(Conv2D(64, 3, 1, padding="same", activation="relu", name="block2_conv2"))
     # model_cnn.add(Dropout(0.3))
     model_cnn.add(MaxPool2D(2))
     # Block 3
-    model_cnn.add(Conv2D(128, 3, 1, padding="same", activation="relu", name="block3_conv1"))
+    model_cnn.add(Conv2D(64, 3, 1, padding="same", activation="relu", name="block3_conv1"))
     # model_cnn.add(Dropout(0.3))
-    model_cnn.add(Conv2D(128, 3, 1, padding="same", activation="relu", name="block3_conv2"))
-    # model_cnn.add(Dropout(0.3))
-    model_cnn.add(Conv2D(128, 3, 1, padding="same", activation="relu", name="block3_conv3"))
+    # model_cnn.add(Conv2D(128, 3, 1, padding="same", activation="relu", name="block3_conv2"))
     # model_cnn.add(Dropout(0.3))
     model_cnn.add(MaxPool2D(2))
     # Block 4
