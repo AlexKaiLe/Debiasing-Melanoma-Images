@@ -90,7 +90,9 @@ def get_model():
     return model_cnn
 
 def main():
+    print("train images")
     X_train, y_train = gather_images("../ISIC_data/Train", 224, 224, 1000)
+    print("tests images")
     X_test,y_test = gather_images("../ISIC_data/Test", 224, 224,1000)
     X_train = X_train / 255
     X_test = X_test / 255
