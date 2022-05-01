@@ -57,9 +57,6 @@ class Model(tf.keras.Model):
         self.latents = {}
         self.feature_latent = {}
 
-        # self.resize_and_rescale = tf.keras.Sequential([tf.keras.layers.Resizing(256,256),tf.keras.layers.Rescaling(1./255)])
-        # self.data_augmentation = tf.keras.Sequential([tf.keras.layers.RandomFlip("horizontal_and_vertical"),tf.keras.layers.RandomRotation(0.5),])
-    
     def save_latent(self, x, name):
         """Save specified latent space to dictionary.
         
@@ -87,9 +84,6 @@ class Model(tf.keras.Model):
 
     def call(self, inputs, dense=False, style=False, is_training=False, feature=False):
         
-        # x = self.resize_and_rescale(inputs)
-        # x = self.data_augmentation(x)
-
         # CNN block 1
         x = self.block1_conv1(inputs)
         x = self.batch_norm(x)
