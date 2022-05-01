@@ -57,8 +57,8 @@ class Model(tf.keras.Model):
         self.latents = {}
         self.feature_latent = {}
 
-        self.resize_and_rescale = tf.keras.Sequential([tf.layers.Resizing(256,256),tf.Rescaling(1./255)])
-        self.data_augmentation = tf.keras.Sequential([tf.layers.RandomFlip("horizontal_and_vertical"),tf.layers.RandomRotation(0.5),])
+        self.resize_and_rescale = tf.keras.Sequential([tf.keras.layers.Resizing(256,256),tf.keras.layers.Rescaling(1./255)])
+        self.data_augmentation = tf.keras.Sequential([tf.keras.layers.RandomFlip("horizontal_and_vertical"),tf.keras.layers.RandomRotation(0.5),])
     
     def save_latent(self, x, name):
         """Save specified latent space to dictionary.
