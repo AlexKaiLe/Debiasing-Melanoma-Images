@@ -218,9 +218,9 @@ def test(model, test_dataset):
     :return: Accuracy"""
 
     for test_inputs, test_labels in test_dataset:
-    #     test_inputs /= 255.0 # normalize pixel values
-        probs = model.call(test_inputs, dense=True, style=False, is_training=False, feature=False)
-        return model.accuracy(probs, test_labels).numpy()
+        test_inputs /= 255.0 # normalize pixel values
+    probs = model.call(test_inputs, dense=True, style=False, is_training=False, feature=False)
+    return model.accuracy(probs, test_labels).numpy()
 
 
 def main():
