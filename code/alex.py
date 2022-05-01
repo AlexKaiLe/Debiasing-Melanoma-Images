@@ -36,6 +36,7 @@ def gather_images(img_dir, xdim, ydim, nmax=5000) :
     return X, y
 
 def shuffle(x_data, y_data):
+    print("Shuffling data")
     temp = list(zip(x_data, y_data))
     random.shuffle(temp)
     x_data, y_data = zip(*temp)
@@ -83,7 +84,7 @@ def get_model():
     # Dense Layers for Classification
     model_cnn.add(Dropout(0.3))
     model_cnn.add(Flatten())
-    model_cnn.add(Dense(512, activation='relu', name='dense1'))
+    model_cnn.add(Dense(256, activation='relu', name='dense1'))
     # model_cnn.add(Dense(64, activation='relu', name='dense2'))
     model_cnn.add(Dense(9, activation='softmax', name='dense3'))
 
