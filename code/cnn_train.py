@@ -235,7 +235,7 @@ def main():
         print(f'Test Accuracy after epoch {e+1}: {acc*100}%')
         if acc > best_weight:
             model.save_weights('../checkpoints/alex_best_weights.h5')
-            print('alex_weialex_best_weightsghts Saved!' + best_weight)
+            print('alex_weialex_best_weightsghts Saved!', best_weight)
             best_weight = acc
         else:
             model.save_weights('../checkpoints/alex_weights.h5')
