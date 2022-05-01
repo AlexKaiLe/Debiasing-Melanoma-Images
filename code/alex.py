@@ -101,7 +101,7 @@ def main():
     model = get_model()
     train_cnn = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=20, batch_size=200, verbose=1)
     model.summary()
-    scores = model.evaluate(X_test, y_test, verbose=0)
+    scores = train_cnn.evaluate(X_test, y_test, verbose=0)
     print("Score : %.2f%%" % (scores[1]*100))
     model.save_weights('../checkpoints/weights.h5')
     print('Weights Saved!')
