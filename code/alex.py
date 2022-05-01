@@ -82,7 +82,7 @@ def get_model():
     # Dense Layers for Classification
     model_cnn.add(Dropout(0.3))
     model_cnn.add(Flatten())
-    model_cnn.add(Dense(256, activation='relu', name='dense1'))
+    model_cnn.add(Dense(128, activation='relu', name='dense1'))
     # model_cnn.add(Dense(64, activation='relu', name='dense2'))
     model_cnn.add(Dense(9, activation='softmax', name='dense3'))
 
