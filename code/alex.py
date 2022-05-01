@@ -99,7 +99,7 @@ def main():
     X_train, y_train = shuffle(X_train, y_train)
     X_test, y_test = shuffle(X_test, y_test)
     model = get_model()
-    train_cnn = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=50, batch_size=200, verbose=1)
+    train_cnn = model.fit(X_train, y_train, validation_data=(X_test, y_test), epochs=25, batch_size=200, verbose=1)
     model.summary()
     scores = train_cnn.evaluate(X_test, y_test, verbose=0)
     print("Score : %.2f%%" % (scores[1]*100))
