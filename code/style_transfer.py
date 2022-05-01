@@ -144,14 +144,14 @@ def main():
     """
     The function that runs the script and trains the input_image
     """
-    model_init = Model()(tf.zeros((1,256,256,3)), dense=True) # old model with dense layers
-    model = Model()(tf.zeros((1,256,256,3)), dense=False) # just the CNN (no dense layers)
-    train_model = Model()(tf.zeros((1,256,256,3)), dense=False) # just the CNN (no dense layers)
+    model_init = Model() # old model with dense layers
+    model = Model() # just the CNN (no dense layers)
+    train_model = Model() # just the CNN (no dense layers)
     
-    # model_init(tf.zeros((1,256,256,3)), dense=True)
-    # model(tf.zeros((1,256,256,3)), dense=False) 
-    # train_model(tf.zeros((1,256,256,3)), dense=False) 
-    model_init.load_weights('../checkpoints/weights.h5') # load weights into old model
+    model_init(tf.zeros((1,256,256,3)), dense=True)
+    model(tf.zeros((1,256,256,3)), dense=False) 
+    train_model(tf.zeros((1,256,256,3)), dense=False) 
+    model_init.load_weights('../checkpoints/alex_weights.h5') # load weights into old model
     # apply relevant weights to the new models with only convolution layers
     for i, m in enumerate(model_init.layers[:-4]): # exclude layers from flatten to dense3
         model.layers[i].set_weights(model_init.layers[i].get_weights())
@@ -187,7 +187,7 @@ def main():
     for i in range(styletransfer.num_iter):
         styletransfer.train_step(styletransfer.image)
         if i % 100 == 0: print(f'Loss at iteration {i}: {styletransfer.total_loss}')
-        
+
     visualize_image(styletransfer.image) # visualize output
     
     
