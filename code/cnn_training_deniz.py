@@ -223,12 +223,12 @@ def test(model, test_dataset):
 	probs = model.call(test_inputs, dense=True, style=False, is_training=False, feature=False)
 	return model.accuracy(probs, test_labels).numpy()
 
-def visualize_loss(losses):
-	x = np.arange(1, len(losses)+1)
+def visualize_accuracy(accuracy):
+	x = np.arange(1, len(accuracy)+1)
 	plt.xlabel('i\'th Batch')
-	plt.ylabel('Loss Value')
-	plt.title('Loss per Batch')
-	plt.plot(x, losses)
+	plt.ylabel('Accuracy Value')
+	plt.title('Accuracy per Batch')
+	plt.plot(x, accuracy)
 	plt.show()
 
 def main():
@@ -249,7 +249,7 @@ def main():
 		print(f'Test Accuracy after epoch {e+1}: {acc*100}%')
 		accuracy.append(acc)
 	test_acc = test(model, test_dataset)
-	visualize_loss(accuracy)
+	visualize_accuracy(accuracy)
 	print(f'Test accuracy is = {test_acc*100} %')
 
 	# I don't think we need this
