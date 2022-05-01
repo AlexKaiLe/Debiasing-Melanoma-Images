@@ -108,5 +108,5 @@ def main():
     model.save_weights('../checkpoints/weights.h5')
     print('Weights Saved!')
 
-if __name__ == "main":
+if __name__ == '__main__':
     main()
