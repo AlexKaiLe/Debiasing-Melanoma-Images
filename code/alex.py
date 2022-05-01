@@ -50,19 +50,19 @@ def get_model():
     # model_cnn.add(Dropout(0.3))
     # model_cnn.add(Conv2D(8, 3, 1, padding="same", activation="relu", name="block1_conv2"))
     # model_cnn.add(Dropout(0.3))
-    model_cnn.add(MaxPool2D(2))
+    # model_cnn.add(MaxPool2D(2))
     # Block 2
-    model_cnn.add(Conv2D(64, 3, activation="relu", name="block2_conv1"))
+    # model_cnn.add(Conv2D(64, 3, activation="relu", name="block2_conv1"))
     # model_cnn.add(Dropout(0.3))
     # model_cnn.add(Conv2D(64, 3, 1, padding="same", activation="relu", name="block2_conv2"))
     # model_cnn.add(Dropout(0.3))
-    model_cnn.add(MaxPool2D(2))
+    # model_cnn.add(MaxPool2D(2))
     # Block 3
-    model_cnn.add(Conv2D(128, 3, activation="relu", name="block3_conv1"))
+    # model_cnn.add(Conv2D(128, 3, activation="relu", name="block3_conv1"))
     # model_cnn.add(Dropout(0.3))
     # model_cnn.add(Conv2D(128, 3, 1, padding="same", activation="relu", name="block3_conv2"))
     # model_cnn.add(Dropout(0.3))
-    model_cnn.add(MaxPool2D(2))
+    # model_cnn.add(MaxPool2D(2))
     # Block 4
     # model_cnn.add(Conv2D(128, 3, 1, padding="same", activation="relu", name="block4_conv1"))
     # # model_cnn.add(Dropout(0.3))
@@ -82,7 +82,7 @@ def get_model():
     # Dense Layers for Classification
     model_cnn.add(Dropout(0.3))
     model_cnn.add(Flatten())
-    model_cnn.add(Dense(128, activation='relu', name='dense1'))
+    # model_cnn.add(Dense(128, activation='relu', name='dense1'))
     # model_cnn.add(Dense(64, activation='relu', name='dense2'))
     model_cnn.add(Dense(9, activation='softmax', name='dense3'))
 
