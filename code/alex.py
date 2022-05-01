@@ -83,7 +83,7 @@ def get_model():
     model_cnn.add(Dense(64, activation='relu', name='dense2'))
     model_cnn.add(Dense(9, activation='softmax', name='dense3'))
 
-    model_cnn.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
+    model_cnn.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['sparse_categorical_accuracy'])
     return model_cnn
 
 def main():
