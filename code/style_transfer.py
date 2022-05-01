@@ -34,12 +34,12 @@ class StyleTransfer:
         self.style_latents_dict = model.call(style_image, dense=False, style=True, is_training=False, feature=False)
         self.feature_latents_dict = model.call(feature_image, dense=False, style=False, is_training=False, feature=True)
         
-        self.num_iter = 10000 # Number of iterations
+        self.num_iter = 5000 # Number of iterations
         self.total_loss = 0 # Total loss (resets for every iteration)
 
         # Weights for Loss
         self.alpha = 1 # Feature
-        self.beta = 1E9 # Style
+        self.beta = 1E10 # Style
         
         # Image optimization
         self.lr = 0.01 # learning rate
@@ -152,7 +152,7 @@ def main():
     model_init(tf.zeros((1,256,256,3)), dense=True)
     model(tf.zeros((1,256,256,3)), dense=False) 
     train_model(tf.zeros((1,256,256,3)), dense=False) 
-    model_init.load_weights('../checkpoints/alex_weights.h5') # load weights into old model
+    model_init.load_weights('../checkpoints/alex_best_weights.h5') # load weights into old model
     # apply relevant weights to the new models with only convolution layers
     for i, m in enumerate(model_init.layers[:-4]): # exclude layers from flatten to dense3
         model.layers[i].set_weights(model_init.layers[i].get_weights())
@@ -169,18 +169,20 @@ def main():
     print(f'Initial accuracy of model on classification: {test_acc*100} %')
 
     ##### FEATURE PREPROCESS #####
-    for feature_image, labels in train_dataset:
-        feature_image /= 255.
-        break
-    print(feature_image)
+    counter = 0
+    for feature_image, labels in test_dataset:
+        if counter == 16*3+2:
+            feature_image /= 255.
+            break
+        counter += 1
 
     ##### STYLE PREPROCESS #####
     style_image = tf.keras.preprocessing.image.load_img('../preprocessed_images/img13.jpg', target_size=(256, 256))
     style_image = tf.Variable(tf.reshape(tf.keras.preprocessing.image.img_to_array(style_image), (1, 256, 256, 3))/255., trainable=False)
 
     ##### GENERATE STATIC IMAGE #####
-    # should be static, random values for every pixel
-    generated_image = tf.Variable(tf.random.uniform((1,256,256,3), minval=0, maxval=1), name='Generated_Image', trainable=True)
+    # generated_image = tf.Variable(tf.random.uniform((1,256,256,3), minval=0, maxval=1), name='Generated_Image', trainable=True)
+    generated_image = tf.Variable(feature_image.numpy(), trainable=True)
 
     #### START STYLE TRANSFER ####
     styletransfer = StyleTransfer(model, train_model, generated_image, style_image, feature_image) # instantiate model
