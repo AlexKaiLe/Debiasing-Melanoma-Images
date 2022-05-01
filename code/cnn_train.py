@@ -232,10 +232,18 @@ def main():
         train(model, train_dataset)
         acc = test(model, test_dataset)
         print(f'Test Accuracy after epoch {e+1}: {acc*100}%')
-        model.save_weights('../checkpoints/alex_weights.h5')
-        print('Weights Saved!')
-        if acc > 40:
-            break
+        if acc > 35 and acc < 40:
+            model.save_weights('../checkpoints/alex_weights_35-40.h5')
+            print('alex_weights_35-40 Saved!')
+        elif acc > 40 and acc < 50:
+            model.save_weights('../checkpoints/alex_weights_40-50.h5')
+            print('alex_weights_40-50 Saved!')
+        elif acc > 50:
+            model.save_weights('../checkpoints/alex_weights_50.h5')
+            print('alex_weights_50 Saved!')
+        else:
+            model.save_weights('../checkpoints/alex_weights.h5')
+            print('alex_weights Saved!')
 
     test_acc = test(model, test_dataset)
     
