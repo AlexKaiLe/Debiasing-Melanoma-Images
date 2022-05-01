@@ -45,7 +45,7 @@ def get_model():
     model_cnn = Sequential()
 
     # Block 1
-    model_cnn.add(Conv2D(32, 3, 1, padding="same", activation="relu", name="block1_conv1"))
+    model_cnn.add(Conv2D(32, 3, 1, input_shape=(224, 224, 3), padding="same", activation="relu", name="block1_conv1"))
     # model_cnn.add(Dropout(0.3))
     model_cnn.add(Conv2D(32, 3, 1, padding="same", activation="relu", name="block1_conv2"))
     # model_cnn.add(Dropout(0.3))
