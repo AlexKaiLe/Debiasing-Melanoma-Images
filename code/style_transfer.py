@@ -34,12 +34,12 @@ class StyleTransfer:
         self.style_latents_dict = model.call(style_image, dense=False, style=True, is_training=False, feature=False)
         self.feature_latents_dict = model.call(feature_image, dense=False, style=False, is_training=False, feature=True)
         
-        self.num_iter = 5000 # Number of iterations
+        self.num_iter = 10000 # Number of iterations
         self.total_loss = 0 # Total loss (resets for every iteration)
 
         # Weights for Loss
-        self.alpha = 1E-1 # Feature
-        self.beta = 1E6 # Style
+        self.alpha = 1 # Feature
+        self.beta = 1E9 # Style
         
         # Image optimization
         self.lr = 0.01 # learning rate
@@ -103,6 +103,7 @@ class StyleTransfer:
                 L_feature = 0.5*tf.reduce_sum(tf.pow(F-P, 2))
         # Linear combination of Feature and Style Losses
         L_total = self.alpha*L_feature + self.beta*L_style
+        # print(L_feature.numpy(), L_style.numpy(), L_total.numpy())
         self.total_loss = L_total # update total loss attribute
         return L_total
 
@@ -169,8 +170,9 @@ def main():
 
     ##### FEATURE PREPROCESS #####
     for feature_image, labels in train_dataset:
-        feature_image/255.
+        feature_image /= 255.
         break
+    print(feature_image)
 
     ##### STYLE PREPROCESS #####
     style_image = tf.keras.preprocessing.image.load_img('../preprocessed_images/img13.jpg', target_size=(256, 256))
