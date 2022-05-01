@@ -91,7 +91,7 @@ class Model(tf.keras.Model):
         # x = self.data_augmentation(x)
 
         # CNN block 1
-        x = self.block1_conv1(x)
+        x = self.block1_conv1(inputs)
         x = self.batch_norm(x)
         x = self.block1_conv2(x)
         x = self.batch_norm(x)
