@@ -74,7 +74,6 @@ def get_model():
     # model_cnn.add(Dropout(0.3))
     model_cnn.add(Conv2D(256, 3, 1, padding="same", activation="relu", name="block5_conv2"))
     # model_cnn.add(Dropout(0.3))
-    model_cnn.add(Dropout(0.3))
     model_cnn.add(MaxPool2D(2))
 
     # Dense Layers for Classification
