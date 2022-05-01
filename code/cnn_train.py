@@ -234,6 +234,8 @@ def main():
         print(f'Test Accuracy after epoch {e+1}: {acc*100}%')
         model.save_weights('../checkpoints/alex_weights.h5')
         print('Weights Saved!')
+        if acc > 40:
+            break
 
     test_acc = test(model, test_dataset)
     
