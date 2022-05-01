@@ -87,11 +87,11 @@ class Model(tf.keras.Model):
 
     def call(self, inputs, dense=False, style=False, is_training=False, feature=False):
         
-        x = self.resize_and_rescale(x)
+        x = self.resize_and_rescale(inputs)
         x = self.data_augmentation(x)
 
         # CNN block 1
-        x = self.block1_conv1(inputs)
+        x = self.block1_conv1(x)
         x = self.batch_norm(x)
         x = self.block1_conv2(x)
         x = self.batch_norm(x)
