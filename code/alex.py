@@ -5,6 +5,7 @@ import glob
 import gc
 import numpy as np
 import random
+import tensorflow as tf
 from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPool2D
 from tensorflow.keras.utils import to_categorical
@@ -82,9 +83,12 @@ def get_model():
     model_cnn.add(Dense(128, activation='relu', name='dense1'))
     model_cnn.add(Dense(64, activation='relu', name='dense2'))
     model_cnn.add(Dense(9, activation='softmax', name='dense3'))
-
-    model_cnn.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['sparse_categorical_accuracy'])
+    optimizer = tf.keras.optimizers.RMSprop(learning_rate=1e-4, momentum=0.01)
+    model_cnn.compile(loss=loss_fn, optimizer=optimizer, metrics=['sparse_categorical_accuracy'])
     return model_cnn
+
+def loss_fn(labels, predictions):
+    return tf.keras.losses.sparse_categorical_crossentropy(labels, predictions, from_logits=False)
 
 def main():
     print("train images")
