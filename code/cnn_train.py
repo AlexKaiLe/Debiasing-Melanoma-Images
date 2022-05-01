@@ -17,7 +17,7 @@ class Model(tf.keras.Model):
         self.batch_size = 64
         self.num_classes = 9
 
-        self.lr = 0.001 # learning rate for optimizer
+        self.lr = 0.0005 # learning rate for optimizer
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.lr)
         self.dropoutrate = 0.3
         self.epsilon = 1E-5
@@ -87,64 +87,59 @@ class Model(tf.keras.Model):
         # CNN block 1
         x = self.block1_conv1(inputs)
         x = self.batch_norm(x)
-        # x = self.dropout(x, training=is_training)
         x = self.block1_conv2(x)
         x = self.batch_norm(x)
-        # x = self.dropout(x, training=is_training)
         x = self.pool(style, 'block1_pool')(x)
+        x = self.dropout(x, training=is_training)
         if style: self.save_latent(x, 'block1')
+
         
         # CNN block 2
         x = self.block2_conv1(x)
-        # x = self.batch_norm(x)
-        # x = self.dropout(x, training=is_training)
+        x = self.batch_norm(x)
         x = self.block2_conv2(x)
-        # x = self.batch_norm(x)
+        x = self.batch_norm(x)
         x = self.pool(style, 'block2_pool')(x)
+        x = self.dropout(x, training=is_training)
         if style: self.save_latent(x, 'block2')
 
         # CNN block 3
         x = self.block3_conv1(x)
-        # x = self.batch_norm(x)
-        # x = self.dropout(x, training=is_training)
+        x = self.batch_norm(x)
         x = self.block3_conv2(x)
-        # x = self.batch_norm(x)
-        # x = self.dropout(x, training=is_training)
+        x = self.batch_norm(x)
         x = self.block3_conv3(x)
-        # x = self.batch_norm(x)
+        x = self.batch_norm(x)
         x = self.pool(style, 'block3_pool')(x)
+        x = self.dropout(x, training=is_training)
         if style: self.save_latent(x, 'block3')
 
         # CNN block 4
         x = self.block4_conv1(x)
-        # x = self.batch_norm(x)
-        # x = self.dropout(x, training=is_training)
+        x = self.batch_norm(x)
         x = self.block4_conv2(x)
-        # x = self.batch_norm(x)
-        # x = self.dropout(x, training=is_training)
+        x = self.batch_norm(x)
         x = self.block4_conv3(x)
-        # x = self.batch_norm(x)
         x = self.pool(style, 'block4_pool')(x)
-        # if style: self.save_latent(x, 'block4')
+        x = self.dropout(x, training=is_training)
+        if style: self.save_latent(x, 'block4')
         if feature: self.feature_latent['block4'] = x
 
         # CNN block 5
         x = self.block5_conv1(x)
         x = self.batch_norm(x)
-        x = self.dropout(x, training=is_training)
         x = self.block5_conv2(x)
         x = self.batch_norm(x)
-        x = self.dropout(x, training=is_training)
         x = self.block5_conv3(x)
         x = self.batch_norm(x)
         x = self.pool(style, 'block5_pool')(x)
+        x = self.dropout(x, training=is_training)
         if style: self.save_latent(x, 'block5')
 
         # Dense Layers for Classification
         if dense:
             x = self.flatten(x)
             x = self.dense1(x)
-            x = self.dropout(x, training=is_training)
             x = self.dense2(x)
             x = self.dropout(x, training=is_training)
             probs = self.dense3(x)
@@ -237,7 +232,7 @@ def main():
         train(model, train_dataset)
         acc = test(model, test_dataset)
         print(f'Test Accuracy after epoch {e+1}: {acc*100}%')
-        model.save_weights('../checkpoints/weights.h5')
+        model.save_weights('../checkpoints/alex_weights.h5')
         print('Weights Saved!')
 
     test_acc = test(model, test_dataset)
