@@ -189,7 +189,7 @@ def train(model, train_dataset):
     train_dataset = train_dataset.shuffle(buffer_sz)
     for train_inputs, train_labels in train_dataset:
         train_inputs /= 255.0 # normalize pixel values
-
+        train_inputs = tf.image.random_flip_left_right(train_inputs)
         with tf.GradientTape() as tape:
             probs = model.call(train_inputs, dense=True, style=False, is_training=True, feature=False)
             loss = model.loss(probs, train_labels)
@@ -234,6 +234,8 @@ def main():
         print(f'Test Accuracy after epoch {e+1}: {acc*100}%')
         model.save_weights('../checkpoints/alex_weights.h5')
         print('Weights Saved!')
+        if acc > 40:
+            break
 
     test_acc = test(model, test_dataset)
     
