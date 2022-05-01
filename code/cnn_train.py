@@ -57,6 +57,9 @@ class Model(tf.keras.Model):
         self.latents = {}
         self.feature_latent = {}
 
+        # self.resize_and_rescale = tf.keras.Sequential([tf.keras.layers.Resizing(256,256),tf.keras.layers.Rescaling(1./255)])
+        # self.data_augmentation = tf.keras.Sequential([tf.keras.layers.RandomFlip("horizontal_and_vertical"),tf.keras.layers.RandomRotation(0.5),])
+    
     def save_latent(self, x, name):
         """Save specified latent space to dictionary.
         
@@ -84,6 +87,9 @@ class Model(tf.keras.Model):
 
     def call(self, inputs, dense=False, style=False, is_training=False, feature=False):
         
+        # x = self.resize_and_rescale(inputs)
+        # x = self.data_augmentation(x)
+
         # CNN block 1
         x = self.block1_conv1(inputs)
         x = self.batch_norm(x)
@@ -189,7 +195,7 @@ def train(model, train_dataset):
     train_dataset = train_dataset.shuffle(buffer_sz)
     for train_inputs, train_labels in train_dataset:
         train_inputs /= 255.0 # normalize pixel values
-        train_inputs = tf.image.random_flip_left_right(train_inputs)
+        # train_inputs = tf.image.random_flip_left_right(train_inputs)
         with tf.GradientTape() as tape:
             probs = model.call(train_inputs, dense=True, style=False, is_training=True, feature=False)
             loss = model.loss(probs, train_labels)
@@ -212,9 +218,9 @@ def test(model, test_dataset):
     :return: Accuracy"""
 
     for test_inputs, test_labels in test_dataset:
-        test_inputs /= 255.0 # normalize pixel values
-    probs = model.call(test_inputs, dense=True, style=False, is_training=False, feature=False)
-    return model.accuracy(probs, test_labels).numpy()
+    #     test_inputs /= 255.0 # normalize pixel values
+        probs = model.call(test_inputs, dense=True, style=False, is_training=False, feature=False)
+        return model.accuracy(probs, test_labels).numpy()
 
 
 def main():
@@ -227,15 +233,19 @@ def main():
                                             image_sz=(256,256)) # try changing to (600,450) on GPU
 
     # cycle through epochs
+    best_weight = 0
     for e in range(model.epochs):
         print(f'Start Epoch #{e+1}')
         train(model, train_dataset)
         acc = test(model, test_dataset)
         print(f'Test Accuracy after epoch {e+1}: {acc*100}%')
-        model.save_weights('../checkpoints/alex_weights.h5')
-        print('Weights Saved!')
-        if acc > 40:
-            break
+        if acc > best_weight:
+            model.save_weights('../checkpoints/alex_best_weights.h5')
+            print('alex_weialex_best_weightsghts Saved!', acc)
+            best_weight = acc
+        else:
+            model.save_weights('../checkpoints/alex_weights.h5')
+            print('alex_weights Saved!')
 
     test_acc = test(model, test_dataset)
     
