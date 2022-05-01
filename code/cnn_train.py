@@ -227,20 +227,16 @@ def main():
                                             image_sz=(256,256)) # try changing to (600,450) on GPU
 
     # cycle through epochs
+    best_weight = 0
     for e in range(model.epochs):
         print(f'Start Epoch #{e+1}')
         train(model, train_dataset)
         acc = test(model, test_dataset)
         print(f'Test Accuracy after epoch {e+1}: {acc*100}%')
-        if acc > 35 and acc < 40:
-            model.save_weights('../checkpoints/alex_weights_35-40.h5')
-            print('alex_weights_35-40 Saved!')
-        elif acc > 40 and acc < 50:
-            model.save_weights('../checkpoints/alex_weights_40-50.h5')
-            print('alex_weights_40-50 Saved!')
-        elif acc > 50:
-            model.save_weights('../checkpoints/alex_weights_50.h5')
-            print('alex_weights_50 Saved!')
+        if acc > best_weight:
+            model.save_weights('../checkpoints/alex_best_weights.h5')
+            print('alex_weialex_best_weightsghts Saved!' + best_weight)
+            best_weight = acc
         else:
             model.save_weights('../checkpoints/alex_weights.h5')
             print('alex_weights Saved!')
