@@ -1,7 +1,4 @@
 from __future__ import absolute_import
-from re import X
-from tarfile import is_tarfile
-from click import style
 import tensorflow as tf
 from tensorflow.keras.layers import Conv2D, MaxPool2D, Dropout, Flatten, Dense, AvgPool2D
 import numpy as np
@@ -34,12 +31,13 @@ class StyleTransfer:
 		self.style_latents_dict = model.call(style_image, dense=False, style=True, is_training=False, feature=False)
 		self.feature_latents_dict = model.call(feature_image, dense=False, style=False, is_training=False, feature=True)
 		
-		self.num_iter = 500 # Number of iterations #used to be 1000
+		self.num_iter = 5000 # Number of iterations 
 		self.total_loss = 0 # Total loss (resets for every iteration)
 
 		# Weights for Loss
-		self.alpha = 1 # Feature
-		self.beta = 1E7 # Style
+		self.alpha = 10 # Feature
+		self.beta = 1E8 # Style
+		self.loss_ratio = self.alpha/self.beta
 		
 		# Image optimization
 		self.lr = 0.01 # learning rate
@@ -130,24 +128,41 @@ def clear_latents(model):
 	model.feature_latent = {}
 	model.latents = {}
 
-def visualize_image(image_tensor):
+def visualize_image(image_tensor, label):
 	"""
 	Output image on device.
 	:param image_tensor: the tensor representation of an image you want to visualize (1, 256, 256, 3)
-	:return: None, but will just display the image on your screen using PIL
+	:param label: string with name for file
+	:return: None, but will just display the image on your screen using PIL and save image to figures folder
 	"""
 	image = np.array(image_tensor).reshape((256,256,3))
 	image = tf.keras.preprocessing.image.array_to_img(image, scale=True) # 'scale' multiplies the array by 255
+	image.save(f'../figures/{label}.png', format='png')
 	image.show()
 	pass
 
 def visualize_loss(loss):
+	"""
+	Produce graph of loss over iterations.
+	:param loss: array or list of loss for every iteration
+	:return: save array and show figures
+	"""
 	x = np.arange(1, len(loss)+1)
 	plt.xlabel('i\'th Batch')
 	plt.ylabel('Loss Value')
 	plt.title('Loss per Iteration')
 	plt.plot(x, loss)
+	plt.savefig('../figures/StyleTransfer_LossperIteration.png')
 	plt.show()
+
+	x = np.arange(1, len(loss[200:])+1)
+	plt.plot(x, loss[200:])
+	plt.xlabel('i\'th Batch')
+	plt.ylabel('Loss Value')
+	plt.title('Loss per Iteration (After i=200)')
+	plt.savefig('../figures/StyleTransfer_LossperIteration_after200')
+	plt.show()
+
 
 def main():
 	"""
@@ -195,15 +210,16 @@ def main():
 	#### START STYLE TRANSFER ####
 	styletransfer = StyleTransfer(model, train_model, generated_image, style_image, feature_image) # instantiate model
 	
-	loss_list = []
+	loss_list = [] # store loss to visualize
+	visualize_image(styletransfer.image, 'initial_image') # visualize initial input
 
-	visualize_image(styletransfer.image) # visualize initial input
 	for i in range(styletransfer.num_iter):
 		styletransfer.train_step(styletransfer.image)
-		if i % 100 == 0: print(f'Loss at iteration {i}: {styletransfer.total_loss}')
+		if i % 100 == 0: 
+			print(f'Loss at iteration {i}: {styletransfer.total_loss}')
 		loss_list.append(styletransfer.total_loss)
 
-	visualize_image(styletransfer.image) # visualize output
+	visualize_image(styletransfer.image, 'final_image') # visualize output
 	visualize_loss(loss_list)
 
 
