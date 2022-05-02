@@ -90,7 +90,7 @@ class Model(tf.keras.Model):
 		x = self.dropout(x, training=is_training)
 		x = self.block1_conv2(x)
 		x = self.batch_norm(x)
-		x = self.dropout(x, training=is_training)
+		# x = self.dropout(x, training=is_training)
 		x = self.pool(style, 'block1_pool')(x)
 		if style: self.save_latent(x, 'block1')
 		
