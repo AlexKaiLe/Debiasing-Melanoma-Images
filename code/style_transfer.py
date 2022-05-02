@@ -34,7 +34,7 @@ class StyleTransfer:
 		self.style_latents_dict = model.call(style_image, dense=False, style=True, is_training=False, feature=False)
 		self.feature_latents_dict = model.call(feature_image, dense=False, style=False, is_training=False, feature=True)
 		
-		self.num_iter = 500 # Number of iterations #used to be 1000
+		self.num_iter = 1000 # Number of iterations #used to be 1000
 		self.total_loss = 0 # Total loss (resets for every iteration)
 
 		# Weights for Loss
