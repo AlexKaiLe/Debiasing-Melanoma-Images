@@ -31,8 +31,8 @@ class StyleTransfer:
         self.block_id = ['block1', 'block2', 'block3', 'block4', 'block5']
 
         # Dictionaries for latent tensors of reference style and features
-        self.style_latents_dict = model.call(style_image, dense=False, style=True, is_training=False, feature=True)
-        self.feature_latents_dict = self.model.feature_latent
+        self.style_latents_dict = model.call(style_image, dense=False, style=True, is_training=False, feature=False)
+        self.feature_latents_dict = model.call(feature_image, dense=False, style=False, is_training=False, feature=True)
         
         self.num_iter = 1000 # Number of iterations
         self.total_loss = 0 # Total loss (resets for every iteration)
@@ -54,8 +54,8 @@ class StyleTransfer:
         """
         with tf.GradientTape() as tape:
             clear_latents(self.train_model)
-            x_style = self.train_model.call(input_image, dense=False, style=True, is_training=False, feature=True)
-            x_feature = self.train_model.feature_latent
+            x_style = self.train_model.call(input_image, dense=False, style=True, is_training=False, feature=False)
+            x_feature = self.train_model.call(input_image, dense=False, style=False, is_training=False, feature=True)
 
             L_total = self.loss(x_style, x_feature)
         
