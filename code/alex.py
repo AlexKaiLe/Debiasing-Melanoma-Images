@@ -82,7 +82,7 @@ def train(model, train_dataset):
         grads = tape.gradient(loss, model.trainable_weights)
         model.optimizer.apply_gradients(zip(grads, model.trainable_weights))
         acc = model.accuracy(probs, train_labels)
-        print("batch", batch, "accuracy", acc*100)
+        print("batch", batch, "accuracy", float(acc*100))
     
 
 def test(model, test_dataset):

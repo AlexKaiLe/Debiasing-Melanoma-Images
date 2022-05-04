@@ -79,7 +79,8 @@ class Model(tf.keras.Model):
     
     def batch_norm(self, x):
         mean, variance = tf.nn.moments(x, axes=[0,1,2])
-        return tf.nn.batch_normalization(x, mean, variance,  None, None, variance_epsilon=self.epsilon)
+        x = tf.nn.batch_normalization(x, mean, variance,  None, None, variance_epsilon=self.epsilon)
+        return x
 
     def call(self, inputs, dense=False, style=False, is_training=False, feature=False):
         
