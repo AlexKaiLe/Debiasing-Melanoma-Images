@@ -32,7 +32,7 @@ model.add(MaxPool2D(pool_size=(2,2),strides=(2,2)))
 model.add(Flatten())
 model.add(Dense(units=4096,activation="relu"))
 model.add(Dense(units=4096,activation="relu"))
-model.add(Dense(units=2, activation="softmax"))
+model.add(Dense(units=9, activation="softmax"))
 
 model.compile(optimizer="Adam", loss=keras.losses.categorical_crossentropy, metrics=['accuracy'])
 model.summary()
