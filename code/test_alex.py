@@ -79,7 +79,8 @@ class Model(tf.keras.Model):
     
     def batch_norm(self, x):
         mean, variance = tf.nn.moments(x, axes=[0,1,2])
-        return tf.nn.batch_normalization(x, mean, variance,  None, None, variance_epsilon=self.epsilon)
+        x = tf.nn.batch_normalization(x, mean, variance,  None, None, variance_epsilon=self.epsilon)
+        return x
 
     def call(self, inputs, dense=False, style=False, is_training=False, feature=False):
         
@@ -243,11 +244,6 @@ def main():
     test_acc = test(model, test_dataset)
     
     print(f'Test accuracy is = {test_acc*100} %')
-
-    # I don't think we need this
-    # for m in model.layers:
-    #     weights = np.array(m.get_weights())
-    #     np.save(f'../checkpoints/{m.name}.npz', weights)
 
     
 if __name__ == '__main__':

@@ -1,46 +1,125 @@
 import keras,os
 from keras.models import Sequential
-from keras.layers import Dense, Conv2D, MaxPool2D , Flatten
-from keras.preprocessing.image import ImageDataGenerator
+from keras.layers import Dense, Conv2D, Flatten, MaxPooling2D, Dropout, Input
 import numpy as np
 import matplotlib.pyplot as plt
+import tensorflow as tf
+import numpy as np
+from keras import backend as K
 
-trdata = ImageDataGenerator()
-traindata = trdata.flow_from_directory(directory="../ISIC_data/Train",target_size=(224,224))
-tsdata = ImageDataGenerator()
-testdata = tsdata.flow_from_directory(directory="../ISIC_data/Test", target_size=(224,224))
+class Model(tf.keras.Model):
+    def __init__(self):
+        super(Model, self).__init__()
+        self.batch_size = 64
+        self.num_classes = 9
+        self.dropoutrate = 0.3
+        self.epsilon = 1E-5
+        self.optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+        self.loss_function = tf.keras.losses.CategoricalCrossentropy()
 
-model = Sequential()
-model.add(Conv2D(input_shape=(224,224,3),filters=64,kernel_size=(3,3),padding="same", activation="relu"))
-model.add(Conv2D(filters=64,kernel_size=(3,3),padding="same", activation="relu"))
-model.add(MaxPool2D(pool_size=(2,2),strides=(2,2)))
-model.add(Conv2D(filters=128, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=128, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(MaxPool2D(pool_size=(2,2),strides=(2,2)))
-model.add(Conv2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=256, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(MaxPool2D(pool_size=(2,2),strides=(2,2)))
-model.add(Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(MaxPool2D(pool_size=(2,2),strides=(2,2)))
-model.add(Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(Conv2D(filters=512, kernel_size=(3,3), padding="same", activation="relu"))
-model.add(MaxPool2D(pool_size=(2,2),strides=(2,2)))
-model.add(Flatten())
-model.add(Dense(units=4096,activation="relu"))
-model.add(Dense(units=4096,activation="relu"))
-model.add(Dense(units=9, activation="softmax"))
+    def loss(self, probs, labels):
+        return tf.reduce_mean(self.loss_function(labels, probs))
+    
+    def accuracy(self, probs, labels):
+        correct_predictions = tf.equal(tf.argmax(probs, 1), tf.argmax(labels, 1))
+        return tf.reduce_mean(tf.cast(correct_predictions, tf.float32)).numpy
 
-model.compile(optimizer="Adam", loss=keras.losses.categorical_crossentropy, metrics=['accuracy'])
-model.summary()
+    def batch_norm(self, x):
+        mean, variance = tf.nn.moments(x, axes=[0,1,2])
+        return tf.nn.batch_normalization(x, mean, variance,  None, None, variance_epsilon=self.epsilon)
 
-from keras.callbacks import ModelCheckpoint, EarlyStopping
-checkpoint = ModelCheckpoint("alex.h5", monitor='val_accuracy', verbose=1, save_best_only=True, save_weights_only=False, mode='auto', save_freq=1)
-early = EarlyStopping(monitor='val_accuracy', min_delta=0, patience=20, verbose=1, mode='auto')
-hist = model.fit(traindata, steps_per_epoch=100, validation_data= testdata, validation_steps=10, epochs=50, batch_size = 100, callbacks=[checkpoint,early])
-model.save_weights('../checkpoints/alex_best_weights_1.h5')
-model.evaluate(testdata)
-print('alex_best_weights_1 Saved!')
+    def call(self, input_tensor, dense=False):
+        # Block 1
+        x = self.batch_norm(input_tensor)
+        x = Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv1')(x)
+        x = Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv2')(x)
+        x = MaxPooling2D((2, 2), strides=(2, 2), name='block1_pool')(x)
+
+        # Block 2
+        x = Conv2D(128, (3, 3), activation='relu', padding='same', name='block2_conv1')(x)
+        x = Conv2D(128, (3, 3), activation='relu', padding='same', name='block2_conv2')(x)
+        x = MaxPooling2D((2, 2), strides=(2, 2), name='block2_pool')(x)
+
+        # Block 3
+        x = Conv2D(256, (3, 3), activation='relu', padding='same', name='block3_conv1')(x)
+        x = Conv2D(256, (3, 3), activation='relu', padding='same', name='block3_conv2')(x)
+        x = Conv2D(256, (3, 3), activation='relu', padding='same', name='block3_conv3')(x)
+        x = Conv2D(256, (3, 3), activation='relu', padding='same', name='block3_conv4')(x)
+        x = MaxPooling2D((2, 2), strides=(2, 2), name='block3_pool')(x)
+
+        # Block 4
+        x = Conv2D(512, (3, 3), activation='relu', padding='same', name='block4_conv1')(x)
+        x = Conv2D(512, (3, 3), activation='relu', padding='same', name='block4_conv2')(x)
+        x = Conv2D(512, (3, 3), activation='relu', padding='same', name='block4_conv3')(x)
+        x = Conv2D(512, (3, 3), activation='relu', padding='same', name='block4_conv4')(x)
+        x = MaxPooling2D((2, 2), strides=(2, 2), name='block4_pool')(x)
+
+        # Block 5
+        x = Conv2D(512, (3, 3), activation='relu', padding='same', name='block5_conv1')(x)
+        x = Conv2D(512, (3, 3), activation='relu', padding='same', name='block5_conv2')(x)
+        x = Conv2D(512, (3, 3), activation='relu', padding='same', name='block5_conv3')(x)
+        x = Conv2D(512, (3, 3), activation='relu', padding='same', name='block5_conv4')(x)
+        x = MaxPooling2D((2, 2), strides=(2, 2), name='block5_pool')(x)
+        x = Dropout(self.dropoutrate)(x)
+
+        if dense:
+            # Classification block
+            x = Flatten(name='flatten')(x)
+            x = Dense(4096, activation='relu', name='fc1')(x)
+            x = Dense(4096, activation='relu', name='fc2')(x)
+            x = Dense(9, activation='softmax', name='predictions')(x)
+        return x
+
+def train(model, train_dataset):  
+    train_dataset = train_dataset.shuffle(3000)  
+    for batches, (train_inputs, train_labels) in enumerate(train_dataset):
+        train_inputs /= 255.0
+        train_inputs = tf.image.random_flip_left_right(train_inputs)
+        with tf.GradientTape() as tape:
+            probs = model.call(train_inputs, dense=True)
+            loss = model.loss(probs, train_labels)
+
+        grads = tape.gradient(loss, model.trainable_weights)
+        model.optimizer.apply_gradients(zip(grads, model.trainable_weights))
+        acc = model.accuracy(probs, train_labels)
+        print(f'batch, {batches} accuracy: {acc*100}%')
+    
+
+def test(model, test_dataset):
+    total_acc = []
+    for test_inputs, test_labels in test_dataset:
+        test_inputs /= 255.0 
+        probs = probs = model.call(test_inputs, dense=True)
+        total_acc.append(model.accuracy(probs, test_labels))
+    return np.average(total_acc)
+
+def main():
+    epochs = 50
+    batch_sz = 100
+    image_sz = (224, 224)
+    train_file = "../ISIC_data/Train"
+    test_file = "../ISIC_data/Test"
+    train_dataset = tf.keras.preprocessing.image_dataset_from_directory(train_file, labels='inferred',color_mode='rgb',label_mode='categorical',batch_size=batch_sz, shuffle=True, image_size=image_sz)
+    test_dataset = tf.keras.preprocessing.image_dataset_from_directory(test_file, labels='inferred', color_mode='rgb', label_mode='categorical', batch_size=batch_sz, shuffle=False, image_size=image_sz)
+    
+    model = Model()
+    best_weight = 0
+    for e in range(epochs):
+        print(f'Starting Epoch #{e+1}')
+        train(model, train_dataset)
+        acc = test(model, test_dataset)
+        print(f'Validation accuracy epoch {e+1}: {acc*100}%')
+        
+        if acc > best_weight:
+            model.save_weights('../checkpoints/alex_best_weights_1.h5')
+            print('alex_best_weights_1 Saved!', acc)
+            best_weight = acc
+        else:
+            model.save_weights('../checkpoints/alex_weights_1.h5')
+            print('alex_weights Saved!')
+    
+    test_acc = test(model, test_dataset)
+    print(f'Test accuracy is = {test_acc*100} %')
+
+if __name__ == '__main__':
+    main()
