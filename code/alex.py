@@ -72,7 +72,7 @@ class Model(tf.keras.Model):
 
 def train(model, train_dataset):  
     train_dataset = train_dataset.shuffle(3000)  
-    for batches, (train_inputs, train_labels) in enumerate(train_dataset):
+    for batch, (train_inputs, train_labels) in enumerate(train_dataset):
         train_inputs /= 255.0
         train_inputs = tf.image.random_flip_left_right(train_inputs)
         with tf.GradientTape() as tape:
@@ -82,7 +82,7 @@ def train(model, train_dataset):
         grads = tape.gradient(loss, model.trainable_weights)
         model.optimizer.apply_gradients(zip(grads, model.trainable_weights))
         acc = model.accuracy(probs, train_labels)
-        print(f'batch, {batches} accuracy: {acc*100}%')
+        print("batch", batch, "accuracy", acc*100)
     
 
 def test(model, test_dataset):
