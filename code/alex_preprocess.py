@@ -16,12 +16,12 @@ class Datasets():
         self.std = np.zeros((3,))
         self.calc_mean_and_std()
 
-        self.train_data = self.get_data(os.path.join(self.data_path, "train"), True, True)
-        self.test_data = self.get_data(os.path.join(self.data_path, "test"), False, False)
+        self.train_data = self.get_data(os.path.join(self.data_path, "Train/"), True, True)
+        self.test_data = self.get_data(os.path.join(self.data_path, "Test/"), False, False)
 
     def calc_mean_and_std(self):
         file_list = []
-        for root, _, files in os.walk(os.path.join(self.data_path, "train")):
+        for root, _, files in os.walk(os.path.join(self.data_path, "Train/")):
             for name in files:
                 if name.endswith(".jpg"):
                     file_list.append(os.path.join(root, name))
