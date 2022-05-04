@@ -30,8 +30,7 @@ class Model(tf.keras.Model):
 
     def call(self, input_tensor, dense=False):
         # Block 1
-        x = self.batch_norm(input_tensor)
-        x = Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv1')(x)
+        x = Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv1')(input_tensor)
         x = Conv2D(64, (3, 3), activation='relu', padding='same', name='block1_conv2')(x)
         x = MaxPooling2D((2, 2), strides=(2, 2), name='block1_pool')(x)
 
