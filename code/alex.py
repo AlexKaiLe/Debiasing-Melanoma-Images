@@ -40,7 +40,7 @@ model.summary()
 from keras.callbacks import ModelCheckpoint, EarlyStopping
 checkpoint = ModelCheckpoint("alex.h5", monitor='val_acc', verbose=1, save_best_only=True, save_weights_only=False, mode='auto', save_freq=1)
 early = EarlyStopping(monitor='val_acc', min_delta=0, patience=20, verbose=1, mode='auto')
-hist = model.fit(steps_per_epoch=100,generator=traindata, validation_data= testdata, validation_steps=10,epochs=100,callbacks=[checkpoint,early])
+hist = model.fit(traindata, steps_per_epoch=100, validation_data= testdata, validation_steps=10, epochs=100, callbacks=[checkpoint,early])
 model.save_weights('../checkpoints/alex_best_weights_1.h5')
 print('alex_weialex_best_weightsghts Saved!')
 
