@@ -22,7 +22,7 @@ class Model(tf.keras.Model):
     
     def accuracy(self, probs, labels):
         correct_predictions = tf.equal(tf.argmax(probs, 1), tf.argmax(labels, 1))
-        return tf.reduce_mean(tf.cast(correct_predictions, tf.float32)).numpy
+        return tf.reduce_mean(tf.cast(correct_predictions, tf.float32))
 
     def batch_norm(self, x):
         mean, variance = tf.nn.moments(x, axes=[0,1,2])
