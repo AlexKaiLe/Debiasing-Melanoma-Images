@@ -74,7 +74,6 @@ def train(model, train_dataset):
     train_dataset = train_dataset.shuffle(3000)  
     for batch, (train_inputs, train_labels) in enumerate(train_dataset):
         train_inputs /= 255.0
-        # train_inputs = tf.image.random_flip_left_right(train_inputs)
         with tf.GradientTape() as tape:
             probs = model.call(train_inputs, dense=True)
             loss = model.loss(probs, train_labels)
