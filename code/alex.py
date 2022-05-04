@@ -74,15 +74,15 @@ def train(model, train_dataset):
     train_dataset = train_dataset.shuffle(3000)  
     for batch, (train_inputs, train_labels) in enumerate(train_dataset):
         train_inputs /= 255.0
-        train_inputs = tf.image.random_flip_left_right(train_inputs)
+        # train_inputs = tf.image.random_flip_left_right(train_inputs)
         with tf.GradientTape() as tape:
             probs = model.call(train_inputs, dense=True)
             loss = model.loss(probs, train_labels)
 
         grads = tape.gradient(loss, model.trainable_weights)
         model.optimizer.apply_gradients(zip(grads, model.trainable_weights))
-        acc = model.accuracy(probs, train_labels)
-        print("batch", batch, "accuracy", float(acc*100))
+        acc = float(model.accuracy(probs, train_labels))*100
+        print("batch", batch, "accuracy", acc)
     
 
 def test(model, test_dataset):
