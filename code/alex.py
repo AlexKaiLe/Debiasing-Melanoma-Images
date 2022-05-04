@@ -38,18 +38,8 @@ model.compile(optimizer="Adam", loss=keras.losses.categorical_crossentropy, metr
 model.summary()
 
 from keras.callbacks import ModelCheckpoint, EarlyStopping
-checkpoint = ModelCheckpoint("alex.h5", monitor='val_acc', verbose=1, save_best_only=True, save_weights_only=False, mode='auto', save_freq=1)
+checkpoint = ModelCheckpoint("alex.h5", monitor='val_acc', verbose=1, save_best_only=True, save_weights_only=False, mode='auto', save_freq=1, monitor='val_accuracy')
 early = EarlyStopping(monitor='val_acc', min_delta=0, patience=20, verbose=1, mode='auto')
 hist = model.fit(traindata, steps_per_epoch=100, validation_data= testdata, validation_steps=10, epochs=100, callbacks=[checkpoint,early])
 model.save_weights('../checkpoints/alex_best_weights_1.h5')
 print('alex_weialex_best_weightsghts Saved!')
-
-plt.plot(hist.history["acc"])
-plt.plot(hist.history['val_acc'])
-plt.plot(hist.history['loss'])
-plt.plot(hist.history['val_loss'])
-plt.title("model accuracy")
-plt.ylabel("Accuracy")
-plt.xlabel("Epoch")
-plt.legend(["Accuracy","Validation Accuracy","loss","Validation Loss"])
-plt.savefig("Meterics")
