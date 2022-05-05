@@ -44,8 +44,8 @@ class Datasets():
         self.mean = np.mean(data_sample, axis=(0, 1, 2))
         self.std = np.std(data_sample, axis=(0, 1, 2))
 
-        print("Dataset mean: [{0:.4f}, {1:.4f}, {2:.4f}]".format(self.mean[0], self.mean[1], self.mean[2]))
-        print("Dataset std: [{0:.4f}, {1:.4f}, {2:.4f}]".format(self.std[0], self.std[1], self.std[2]))
+        print("Mean: [{0:.4f}, {1:.4f}, {2:.4f}]".format(self.mean[0], self.mean[1], self.mean[2]))
+        print("STD: [{0:.4f}, {1:.4f}, {2:.4f}]".format(self.std[0], self.std[1], self.std[2]))
 
     def standardize(self, img):
         img -= self.mean
@@ -59,7 +59,6 @@ class Datasets():
 
 
     def get_data(self, path, shuffle, augment):
-
         if augment:
             data_gen = tf.keras.preprocessing.image.ImageDataGenerator(preprocessing_function=self.preprocess_fn,
                 zoom_range=0.5,
