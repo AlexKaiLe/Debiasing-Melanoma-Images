@@ -7,11 +7,13 @@ import re
 class myModel(tf.keras.Model):
     def __init__(self):
        super(myModel, self).__init__()
+       self.train = True
+       self.dense = True
        self.optimizer = tf.keras.optimizers.RMSprop(learning_rate=hp.learning_rate, momentum=hp.momentum)
        
        self.architecture = [
        # Block 1
-       Conv2D(filters=32, kernel_size=(5, 5), padding='same', strides=(1, 1), activation='relu', name="block1_conv1"),
+       Conv2D(filters=32, kernel_size=(5, 5), padding='same', strides=(1, 1), activation='relu', name="block1_conv1", input_shape = (1, 224,224,3)),
        Conv2D(filters=32, kernel_size=(3, 3), padding='same', strides=(1, 1), activation='relu', name="block1_conv2"),
        MaxPool2D(pool_size=(2, 2), name="block1_pool"),
 
@@ -27,16 +29,26 @@ class myModel(tf.keras.Model):
        Dropout(rate=0.3, name="block3_dropout"),
 
        # Block 4
-       Flatten(name="block4_flatten"),
+       Flatten(name="block4_flatten", trainable = self.train),
        Dense(units=512, activation='relu', name="block4_dense"),
 
        # Block 5
        Dense(units=hp.num_classes, activation='softmax', name="block5_dense")
        ]
+       
 
     def call(self, x):
-       for layer in self.architecture:
-              x = layer(x)
+       # for layer in self.architecture:
+       #        x = layer(x)
+       # return x
+       
+       if self.dense:
+              MLP = 13
+       else:
+              MLP = 10
+       for b, layer in enumerate(self.architecture):
+              if b<MLP:
+                     x = layer(x)
        return x
 
     @staticmethod

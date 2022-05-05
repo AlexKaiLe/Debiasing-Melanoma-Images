@@ -57,7 +57,6 @@ class Datasets():
         img = self.standardize(img)
         return img
 
-
     def get_data(self, path, shuffle, augment):
         if augment:
             data_gen = tf.keras.preprocessing.image.ImageDataGenerator(preprocessing_function=self.preprocess_fn,
