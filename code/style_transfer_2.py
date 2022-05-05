@@ -135,7 +135,7 @@ def visualize_image(image_tensor, label):
 	:param label: string with name for file
 	:return: None, but will just display the image on your screen using PIL and save image to figures folder
 	"""
-	image = np.array(image_tensor).reshape((256,256,3))
+	image = np.array(image_tensor).reshape((224,244,3))
 	image = tf.keras.preprocessing.image.array_to_img(image, scale=True) # 'scale' multiplies the array by 255
 	image.save(f'../figures/{label}.png', format='png')
 	image.show()
