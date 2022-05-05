@@ -26,7 +26,7 @@ class Model(tf.keras.Model):
         # Call layers
         self.dropout = tf.keras.layers.Dropout(self.dropoutrate)
         # Block 1
-        self.block1_conv1 = Conv2D(32, 3, 1, padding="same", activation="relu", name="block1_conv1")
+        self.block1_conv1 = Conv2D(32, 5, 1, padding="same", activation="relu", name="block1_conv1", )
         self.block1_conv2 = Conv2D(32, 3, 1, padding="same", activation="relu", name="block1_conv2")
         self.block1_pool = MaxPool2D(pool_size=(2, 2), name="block1_pool")
         # Block 2
@@ -67,9 +67,9 @@ class Model(tf.keras.Model):
         :param name: string to name the layer
         :returns: pool layer"""
         if style: # if true avgpool
-            return AvgPool2D((2, 2), name=name)
+            return AvgPool2D(pool_size = (2, 2), name=name)
         else:
-            return MaxPool2D(2, name=name)
+            return MaxPool2D(pool_size = (2, 2), name=name)
     
     def batch_norm(self, x):
         mean, variance = tf.nn.moments(x, axes=[0,1,2])
