@@ -12,7 +12,7 @@ def train(model, datasets, init_epoch, checkpoint_path):
         tf.keras.callbacks.TensorBoard(
             update_freq='batch',
             profile_batch=0),
-        modelSaver(checkpoint_path, hp.max_num_weights)
+            modelSaver(checkpoint_path, hp.max_num_weights)
     ]
     model.fit(
         x=datasets.train_data,
