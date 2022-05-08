@@ -200,7 +200,7 @@ def train(model, train_dataset):
         print(f'batch, {b} accuracy: {acc*100}%')
         b += 1
 
-    return None
+    return loss, acc
 
 
 def test(model, test_dataset):
@@ -222,6 +222,7 @@ def main():
     :return: run training and testing"""
 
     model = Model()
+    print(model.summary)
     train_dataset, test_dataset = get_data('../ISIC_data/Train/', '../ISIC_data/Test/', 
                                             batch_sz=model.batch_size, shuffle=True, 
                                             image_sz=(256,256)) # try changing to (600,450) on GPU
@@ -230,7 +231,12 @@ def main():
     best_weight = 0
     for e in range(model.epochs):
         print(f'Start Epoch #{e+1}')
-        train(model, train_dataset)
+        loss, acc = train(model, train_dataset)
+
+        f = open("loss_acc.txt", "a")
+        f.write(str(loss) + "," + str(acc))
+        f.close()
+
         acc = test(model, test_dataset)
         print(f'Test Accuracy after epoch {e+1}: {acc*100}%')
         if acc > best_weight:
@@ -245,10 +251,6 @@ def main():
     
     print(f'Test accuracy is = {test_acc*100} %')
 
-    # I don't think we need this
-    # for m in model.layers:
-    #     weights = np.array(m.get_weights())
-    #     np.save(f'../checkpoints/{m.name}.npz', weights)
 
     
 if __name__ == '__main__':
