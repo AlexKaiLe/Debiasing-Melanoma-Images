@@ -1,5 +1,7 @@
 # Generation of Diverse Image Data Using Style Transfer for Debiasing Melanoma Classification Models
 
+[Devpost with General Overview, Final Report and Poster](https://devpost.com/software/dl-on-the-dl?ref_content=my-projects-tab&ref_feature=my_projects)
+
 # Data
 The data that we used to generate the trained CNN can be found in the ISIC_data folder, which contains 9 different classes of skin cancer. The data used was found from Kaggle (https://www.kaggle.com/c/siim-isic-melanoma-classification) and had the following classifications:
 - actinic keratosis
