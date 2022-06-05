@@ -55,15 +55,15 @@ The second training scheme was the style transfer (Fig. 1) which utilized the tr
 
 Here, E<sub>l</sub> is the style loss per block, Nl is the product of the height and width of the latent space, and Ml is the number of channels of the latent space. G<sub>i,j</sub> and A<sub>i,j</sub> are the elements within Gram matrix representations of the style latent arrays from the “input image” and “style image”. 
 
-![](https://github.com/AlexKaiLe/melanoma_skin_tones/blob/main/figures/eq_2.png)
+<img src="https://github.com/AlexKaiLe/melanoma_skin_tones/blob/main/figures/eq_2.png" alt="drawing" height="100"/>
 
 l<sub>style</sub> is the total style loss while L is the total number of saved latent spaces. The feature loss is computed from the difference between the latent space’s of the “input image” and “feature image” after the fourth convolution block. The loss is given by Eq. 3.
 
-![](https://github.com/AlexKaiLe/melanoma_skin_tones/blob/main/figures/eq_3.png)
+<img src="https://github.com/AlexKaiLe/melanoma_skin_tones/blob/main/figures/eq_3.png" alt="drawing" height="100"/>
 
 l<sub>feature</sub> is the feature loss, F and P are the feature latent space representations of the “input image” and the “feature image”. Eq. 4 gives the total loss which is a linear combination of the style loss and feature loss. ɑ and ꞵ are the loss weights for feature and style losses, respectively. They are hyperparameters.
 
-![](https://github.com/AlexKaiLe/melanoma_skin_tones/blob/main/figures/eq_4.png)
+<img src="https://github.com/AlexKaiLe/melanoma_skin_tones/blob/main/figures/eq_4.png" alt="drawing" height="100"/>
 
 Since the style loss is much smaller than feature loss in magnitude, due to the Gram matrices conversion, the ɑ to ꞵ ratio must be ~1E-7. The user can emphasize features or style by adjusting ɑ and ꞵ, respectively. 
 
