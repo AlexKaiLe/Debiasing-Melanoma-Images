@@ -50,7 +50,8 @@ Figure 1: CNN architecture
 ### Model - Style Transfer
 The second training scheme was the style transfer (Fig. 1) which utilized the trained CNN model in different ways (Gatys et. al. 2016). To successfully transfer a style of one image (style image) to a desired image (feature image), it is necessary to be able to capture the style components and important features of an image. To do so, the CNN model is used without the dense and dropout layers. To capture style, the pooling layers were switched from max to average pooling. Next, the latent spaces (arrays) after each block are saved. To capture features, the pooling layers remain max pooling, but only the latent space of the fourth convolution block is saved. These saved latent spaces should hold deep style and feature representations of a given image. The style transfer training scheme first computes the latent space representations of the style from the “style image” and the features from the “feature image”. A third image (input image) is then passed through both style and feature CNN’s. A style loss is computed using the difference between the “input image”’s style latent spaces and the reference “style image”’s style latent spaces. Note that these latent spaces are converted to their Gram matrix representation during calculation and the loss per layer is given by Eq. 1 while the total style loss is represented by Eq. 2.
 
-![](https://github.com/AlexKaiLe/melanoma_skin_tones/blob/main/figures/eq_1.png)
+<img src="https://github.com/AlexKaiLe/melanoma_skin_tones/blob/main/figures/eq_1.png" alt="drawing" height="100"/>
+
 
 Here, E<sub>l</sub> is the style loss per block, Nl is the product of the height and width of the latent space, and Ml is the number of channels of the latent space. G<sub>i,j</sub> and A<sub>i,j</sub> are the elements within Gram matrix representations of the style latent arrays from the “input image” and “style image”. 
 
