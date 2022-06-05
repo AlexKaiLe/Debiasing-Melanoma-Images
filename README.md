@@ -85,7 +85,7 @@ Figure 4: Four different combinations of style and feature images where the styl
 
 As seen by the decreasing loss in Fig. 5, the overall loss is continuously decreasing as we would expect. However, there are also large jumps in these loss values that we predicted, as well. These are because the model is trying to decrease the loss of the competing elements of style and features. As the picture takes on more style elements, the features are worsened, and vice versa. For the case of the large jumps, the gradient may have changed the image to replicate either the feature or style too much, causing the other’s loss to increase significantly.
 
-<img src="https://github.com/AlexKaiLe/melanoma_skin_tones/blob/main/figures/fig_5.png" alt="drawing" height="300"/>
+<img src="https://github.com/AlexKaiLe/melanoma_skin_tones/blob/main/figures/fig_5.png" alt="drawing" height="500"/>
 
 Figure 5: The loss over i iterations after the first 200 iterations. The reason the first 200 were not included was because the loss values were extremely large. Including the first 200 iterations into a single graph would have resulted in a large initial drop and a seemingly insignificant decrease afterwards.
 
