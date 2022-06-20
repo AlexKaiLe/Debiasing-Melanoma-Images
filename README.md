@@ -34,8 +34,7 @@ The use of deep learning models such as convolutional neural networks are found 
 Thus, our aim is to utilize deep learning for correcting model bias. By using a style transfer model architecture using convolutional neural networks (CNNs), we are able to take darker skin images and images of skin lesions to produce images of darker skin lesions that could be used for future deep learning model training. 
  
  
-## Methodology
-Dataset
+## Methodology Dataset
 In order to complete the style transfer model architecture, two different datasets are required: light skin melanoma images describing the feature of the skin lesions, and diverse skin background images describing the style of the background to incorporate into the final image result. The former dataset was compiled by the International Skin Imaging Collaboration (ISIC) to produce 2357 images of malignant and benign skin abnormalities with classification of 9 different cancer subtypes: actinic keratosis, basal cell carcinoma, dermatofibroma, melanoma, nevus, pigmented benign keratosis, seborrheic keratosis, squamous cell carcinoma and vascular lesion. The second dataset was web-scraped to identify darker-skinned image backgrounds to use for style-transfer. 
  
 ## Preprocessing
